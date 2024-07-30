@@ -15,6 +15,8 @@ public class ApplicationDbContext : DbContext
 
     public DbSet<StockEntity> Stocks { get; set; }
 
+    public DbSet<StockHistoryEntity> StockHistories { get; set; }
+
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
     {
 
@@ -100,7 +102,18 @@ public class ApplicationDbContext : DbContext
             .Property(p => p.ProductType)
             .IsRequired().HasConversion<string>();
 
-
+        modelBuilder.Entity<StockHistoryEntity>()
+            .HasKey(p => p.Id);
+        modelBuilder.Entity<StockHistoryEntity>()
+            .Property(p => p.ProductQuantity)
+            .IsRequired();
+        modelBuilder.Entity<StockHistoryEntity>()
+            .Property(p => p.ProductId)
+            .IsRequired();
+        modelBuilder.Entity<StockHistoryEntity>()
+            .HasOne(p => p.Stock)
+            .WithMany(p => p.StockHistories)
+            .HasForeignKey(p => p.StockId);
 
     }
 }
