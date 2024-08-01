@@ -19,4 +19,12 @@ public class ProductRepository(IBaseRepository _baseRepository) : IProductReposi
         return products;
 
     }
+
+    public async Task<int> AddAsync(ProductEntity product, CancellationToken ct)
+    {
+        await _baseRepository.AddAsync<ProductEntity>(product, ct);
+        await _baseRepository.SaveAsync(ct);
+
+        return product.Id;
+    }
 }

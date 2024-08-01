@@ -1,4 +1,6 @@
-﻿using ECommerceMVC.Application.Services;
+﻿using AutoMapper;
+using ECommerceMVC.Application.Services;
+using ECommerceMVC.Application.UnitTests.MapperProfiles;
 using ECommerceMVC.Domain.Entities;
 using ECommerceMVC.Domain.Enums;
 using ECommerceMVC.Domain.Repositories;
@@ -7,8 +9,13 @@ using Moq;
 
 namespace ECommerceMVC.Application.UnitTests.Services;
 
-public class ProductServiceTests
+public class ProductServiceTests : IClassFixture<MappingTestFixture>
 {
+    private readonly IMapper mapper;
+    public ProductServiceTests(MappingTestFixture fixture)
+    {
+        mapper = fixture.mapper;
+    }
     [Fact]
     public async Task GetAllByFiltersAsync_ShouldReturnMappedProducts()
     {
@@ -33,7 +40,7 @@ public class ProductServiceTests
 
         };
         repositoryMock.Setup(x => x.GetAllByFiltersAsync(It.IsAny<ProductType>(), It.IsAny<CancellationToken>())).ReturnsAsync(products);
-        var productService = new ProductService(repositoryMock.Object);
+        var productService = new ProductService(repositoryMock.Object, mapper);
 
         //Act//
         var result = await productService.GetAllByFiltersAsync(ProductType.Bags, default);
