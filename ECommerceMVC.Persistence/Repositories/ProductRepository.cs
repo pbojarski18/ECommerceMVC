@@ -27,4 +27,21 @@ public class ProductRepository(IBaseRepository _baseRepository) : IProductReposi
 
         return product.Id;
     }
+
+    public async Task<bool> RemoveAsync(int productId, CancellationToken ct)
+    {
+        var product = await _baseRepository.GetAll<ProductEntity>()
+            .FirstOrDefaultAsync(p => p.Id == productId);
+
+        if (product == null)
+        {
+            return false;
+        }
+
+        _baseRepository.Delete(product);
+        await _baseRepository.SaveAsync(ct);
+
+        return true;
+    }
 }
+

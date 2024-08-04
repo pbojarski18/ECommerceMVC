@@ -8,4 +8,6 @@ public interface IProductRepository
     Task<IEnumerable<ProductEntity>> GetAllByFiltersAsync(ProductType productType, CancellationToken ct);
 
     Task<int> AddAsync(ProductEntity product, CancellationToken ct);
+
+    Task<bool> RemoveAsync(int productId, CancellationToken ct);
 }

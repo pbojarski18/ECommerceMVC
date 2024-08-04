@@ -30,4 +30,9 @@ public class ProductService(IProductRepository _productRepository,
         return productEntity.Id;
     }
 
+    public async Task<bool> RemoveAsync(int productId, CancellationToken ct)
+    {
+        return await _productRepository.RemoveAsync(productId, ct);
+    }
+
 }

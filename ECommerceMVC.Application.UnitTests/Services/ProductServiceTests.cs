@@ -55,5 +55,21 @@ public class ProductServiceTests : IClassFixture<MappingTestFixture>
         result.First().Sex.Should().Be("Male");
         result.First().ProductType.Should().Be(ProductType.Bags);
     }
+
+    [Fact]
+    public async Task RemoveAsync_ShouldRemoveProduct()
+    {
+        //Arrange
+        var repositoryMock = new Mock<IProductRepository>();
+        repositoryMock.Setup(x => x.RemoveAsync(It.IsAny<int>(), It.IsAny<CancellationToken>())).ReturnsAsync(true);
+
+        var productService = new ProductService(repositoryMock.Object, mapper);
+
+        //Act
+        var result = await productService.RemoveAsync(1, default);
+
+        //Assert
+        result.Should().BeTrue();
+    }
 }
 

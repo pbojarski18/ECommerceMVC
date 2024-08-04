@@ -34,4 +34,12 @@ public class ProductController(IProductService _productService) : Controller
 
         return View(model);
     }
+
+    [HttpPost]
+    public async Task<IActionResult> RemoveProduct(int productId)
+    {
+        var model = await _productService.RemoveAsync(productId, default);
+
+        return View(model);
+    }
 }

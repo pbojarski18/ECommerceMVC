@@ -22,6 +22,7 @@ public class BaseRepository(ApplicationDbContext _applicationDbContext) : IBaseR
     public IQueryable<TEntity> GetAll<TEntity>() where TEntity : class
         => _applicationDbContext.Set<TEntity>();
 
+    
     public async Task<int> SaveAsync(CancellationToken ct = default)
         => await _applicationDbContext.SaveChangesAsync(ct);
 
