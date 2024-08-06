@@ -43,5 +43,27 @@ public class ProductRepository(IBaseRepository _baseRepository) : IProductReposi
 
         return true;
     }
+
+    public async Task<bool> EditAsync(ProductEntity product, CancellationToken ct)
+    {
+        _baseRepository.Update<ProductEntity>(product);
+        await _baseRepository.SaveAsync(ct);
+
+        return true;
+    }
+
+    public async Task<ProductEntity> GetByIdAsync(int productId, CancellationToken ct)
+    {
+        var product = await _baseRepository.GetAll<ProductEntity>()
+            .FirstOrDefaultAsync(p => p.Id == productId, ct);
+        if (product == null)
+        {
+            throw new Exception("Product not found");
+        }
+        else
+        {
+            return product;
+        }
+    }
 }
 

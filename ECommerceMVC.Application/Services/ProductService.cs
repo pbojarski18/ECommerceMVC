@@ -25,6 +25,9 @@ public class ProductService(IProductRepository _productRepository,
     public async Task<int> AddAsync(ProductDto productDto, CancellationToken ct)
     {
         var productEntity = _mapper.Map<ProductEntity>(productDto);
+        //do poprawy na testy
+        productEntity.ProductCategory = new() { Brand = productDto.Brand, CreateTimeUtc = DateTime.UtcNow, ProductType = productDto.ProductType, Sex = productDto.Sex };
+
         await _productRepository.AddAsync(productEntity, ct);
 
         return productEntity.Id;
@@ -33,6 +36,13 @@ public class ProductService(IProductRepository _productRepository,
     public async Task<bool> RemoveAsync(int productId, CancellationToken ct)
     {
         return await _productRepository.RemoveAsync(productId, ct);
+    }
+
+    public async Task<bool> EditAsync(ProductDto productDto, CancellationToken ct)
+    {
+        var oldProduct = await _productRepository.GetByIdAsync(productDto.Id, ct);
+        var editedProduct = _mapper.Map(productDto, oldProduct);
+        return await _productRepository.EditAsync(editedProduct, ct);       
     }
 
 }

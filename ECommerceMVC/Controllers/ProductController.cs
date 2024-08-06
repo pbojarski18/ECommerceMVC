@@ -22,6 +22,7 @@ public class ProductController(IProductService _productService) : Controller
         return View(model);
     }
 
+    [HttpGet]
     public IActionResult AddProduct()
     {
         return View();
@@ -39,6 +40,20 @@ public class ProductController(IProductService _productService) : Controller
     public async Task<IActionResult> RemoveProduct(int productId)
     {
         var model = await _productService.RemoveAsync(productId, default);
+
+        return View(model);
+    }
+
+    [HttpGet]
+    public IActionResult EditProduct()
+    {
+        return View();
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> EditProduct(ProductDto productDto)
+    {
+        var model = await _productService.EditAsync(productDto, default);
 
         return View(model);
     }

@@ -10,4 +10,8 @@ public interface IProductRepository
     Task<int> AddAsync(ProductEntity product, CancellationToken ct);
 
     Task<bool> RemoveAsync(int productId, CancellationToken ct);
+
+    Task<bool> EditAsync(ProductEntity product, CancellationToken ct);
+
+    Task<ProductEntity> GetByIdAsync(int productId, CancellationToken ct);
 }

@@ -1,5 +1,7 @@
 ﻿using ECommerceMVC.Application.Interfaces;
 using ECommerceMVC.Application.Services;
+using FluentValidation;
+using FluentValidation.AspNetCore;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
 
@@ -11,7 +13,10 @@ public static class DependencyRegistration
     {
         services.AddAutoMapper(Assembly.GetExecutingAssembly());
         services.AddScoped<IProductService, ProductService>();
+        services.AddFluentValidationAutoValidation();
+        services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());       
         return services;
     }
+
 
 }

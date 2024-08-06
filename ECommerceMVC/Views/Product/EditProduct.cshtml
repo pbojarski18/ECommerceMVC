@@ -1,8 +1,9 @@
 ﻿@model ECommerceMVC.Application.Dtos.Products.ProductDto
 
-<h2>Add New Product</h2>
+<h2>Edit Product</h2>
 
-<form method="post" asp-action="AddProduct">
+<form method="post" asp-action="EditProduct">
+    <input type="hidden" asp-for="Id" />
     <div>
         <label>Name:</label>
         <input type="text" asp-for="Name" required />
@@ -36,5 +37,5 @@
             <option value="4">Accessories</option>
         </select>
     </div>
-    <button type="submit">Add Product</button>
+    <button type="submit">Update Product</button>
 </form>
