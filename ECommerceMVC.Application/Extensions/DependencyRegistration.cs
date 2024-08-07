@@ -9,12 +9,13 @@ namespace ECommerceMVC.Application.Extensions;
 
 public static class DependencyRegistration
 {
-    public static IServiceCollection AddApplicationDi (this IServiceCollection services)
+    public static IServiceCollection AddApplicationDi(this IServiceCollection services)
     {
         services.AddAutoMapper(Assembly.GetExecutingAssembly());
         services.AddScoped<IProductService, ProductService>();
         services.AddFluentValidationAutoValidation();
-        services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());       
+        services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
+        services.AddScoped<IStockService, StockService>();
         return services;
     }
 

@@ -1,46 +1,61 @@
 ﻿@model IEnumerable<ECommerceMVC.Application.Dtos.Products.ProductDto>
 
-<h2>Product List</h2>
+<h2 class="text-center my-4">Product List</h2>
 
-<form method="post" asp-action="Index">
-    <label for="productType">Select Product Type:</label>
-    <select id="productType" name="productType">
-        <option value="">All</option>
-        <option value="1">Raquets</option>
-        <option value="2">Balls</option>
-        <option value="3">Bags</option>
-        <option value="4">Accessories</option>
-    </select>
-    <button type="submit">Filter</button>
-</form>
+<div class="container">
+    <form method="post" asp-action="Index" class="mb-4">
+        <div class="form-group">
+            <label for="productType">Select Product Type:</label>
+            <select id="productType" name="productType" class="form-control">
+                <option value="">All</option>
+                <option value="1">Rackets</option>
+                <option value="2">Balls</option>
+                <option value="3">Bags</option>
+                <option value="4">Accessories</option>
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary">Filter</button>
+    </form>
 
-<table>
-    <thead>
-        <tr>
-            <th>Name</th>
-            <th>Price</th>
-            <th>Description</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        @if (Model != null)
-        {
-            @foreach (var product in Model)
+    <table class="table table-striped">
+        <thead class="thead-dark">
+            <tr>
+                <th>Name</th>
+                <th>Price</th>
+                <th>Description</th>
+                <th>Brand</th>
+                <th>Sex</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model != null && Model.Any())
+            {
+                foreach (var product in Model)
+                {
+                    <tr>
+                        <td>@product.Name</td>
+                        <td>@product.Price.ToString("C")</td> <!-- Format price as currency -->
+                        <td>@product.Description</td>
+                        <td>@product.Brand</td>
+                        <td>@product.Sex</td>
+                        <td>
+                            <a asp-action="EditProduct" asp-route-id="@product.Id" class="btn btn-warning btn-sm">Edit</a>
+                            <a asp-controller="Stock" asp-action="Index" asp-route-productId="@product.Id" class="btn btn-warning btn-sm">Show Stock</a>
+
+                            <form method="post" asp-action="RemoveProduct" asp-route-productId="@product.Id" style="display:inline;">
+                                <button type="submit" class="btn btn-danger btn-sm">Remove</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            }
+            else
             {
                 <tr>
-                    <td>@product.Name</td>
-                    <td>@product.Price</td>
-                    <td>@product.Description</td>
-                    <td>
-                        <a asp-action="EditProduct" asp-route-id="@product.Id">Edit</a>
-                        <form method="post" asp-action="RemoveProduct" asp-route-productId="@product.Id" style="display:inline;">
-                            <button type="submit">Remove</button>
-                        </form>
-                    </td>
+                    <td colspan="6" class="text-center">No products found.</td>
                 </tr>
             }
-
-        }
-    </tbody>
-</table>
+        </tbody>
+    </table>
+</div>

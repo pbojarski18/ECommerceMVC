@@ -13,4 +13,6 @@ public interface IProductService
     Task<bool> RemoveAsync(int productId, CancellationToken ct);
 
     Task<bool> EditAsync(ProductDto productDto, CancellationToken ct);
+
+    Task<ProductDto> GetByIdAsync(int productId, CancellationToken ct);
 }

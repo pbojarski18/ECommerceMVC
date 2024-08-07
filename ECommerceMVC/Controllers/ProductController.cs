@@ -1,15 +1,16 @@
 ﻿using ECommerceMVC.Application.Dtos.Products;
 using ECommerceMVC.Application.Interfaces;
+using ECommerceMVC.Application.Validators.Product;
 using ECommerceMVC.Domain.Entities;
 using ECommerceMVC.Domain.Enums;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ECommerceMVC.Controllers;
 
-public class ProductController(IProductService _productService) : Controller
+public class ProductController(IProductService _productService, ProductDtoValidator _productDtoValidator) : Controller
 {
     private readonly IProductService _productService = _productService;
-
+    private readonly ProductDtoValidator _productDtoValidator = _productDtoValidator;
     public IActionResult Index()
     {
         return View();
@@ -31,9 +32,14 @@ public class ProductController(IProductService _productService) : Controller
     [HttpPost]
     public async Task<IActionResult> AddProduct(ProductDto productDto)
     {
-        var model = await _productService.AddAsync(productDto, default);
+        var result = await _productDtoValidator.ValidateAsync(productDto);
+        if (result.IsValid)
+        {
+            var model = await _productService.AddAsync(productDto, default);
+            return RedirectToAction(nameof(Index));
+        }
 
-        return View(model);
+        return View(productDto);
     }
 
     [HttpPost]
@@ -41,20 +47,26 @@ public class ProductController(IProductService _productService) : Controller
     {
         var model = await _productService.RemoveAsync(productId, default);
 
-        return View(model);
+        return RedirectToAction(nameof(Index));
     }
 
     [HttpGet]
-    public IActionResult EditProduct()
+    public async Task<IActionResult> EditProduct(int id)
     {
-        return View();
+        var model = await _productService.GetByIdAsync(id, default);
+        return View(model);
     }
 
     [HttpPost]
     public async Task<IActionResult> EditProduct(ProductDto productDto)
     {
-        var model = await _productService.EditAsync(productDto, default);
+        var result = await _productDtoValidator.ValidateAsync(productDto);
+        if (result.IsValid)
+        {
+            var model = await _productService.EditAsync(productDto, default);
+            return RedirectToAction(nameof(Index));
+        }
 
-        return View(model);
+        return View(productDto);
     }
 }

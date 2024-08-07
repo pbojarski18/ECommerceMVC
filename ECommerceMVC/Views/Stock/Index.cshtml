@@ -1,0 +1,31 @@
+﻿@model ECommerceMVC.Application.Dtos.Stocks.StockDto
+
+<h2 class="text-center my-4">Stock Information</h2>
+
+<div class="container">
+    @if (Model != null)
+    {
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="card-title">Product ID: @Model.Id</h5>
+            </div>
+            <div class="card-body">
+                <p><strong>Product Quantity:</strong> @Model.ProductQuantity</p>
+
+                <form method="post" asp-action="UpdateStock" asp-route-id="@Model.Id">
+                    <div class="form-group">
+                        <label for="productQuantity">Update Quantity:</label>
+                        <input type="number" id="productQuantity" name="productQuantity" class="form-control" value="@Model.ProductQuantity" required />
+                    </div>
+                    <button type="submit" class="btn btn-primary">Update Stock</button>
+                </form>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-warning" role="alert">
+            No stock information found for this product.
+        </div>
+    }
+</div>

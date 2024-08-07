@@ -31,7 +31,7 @@ public class ProductRepository(IBaseRepository _baseRepository) : IProductReposi
     public async Task<bool> RemoveAsync(int productId, CancellationToken ct)
     {
         var product = await _baseRepository.GetAll<ProductEntity>()
-            .FirstOrDefaultAsync(p => p.Id == productId);
+            .FirstOrDefaultAsync(p => p.Id == productId, ct);
 
         if (product == null)
         {
@@ -55,7 +55,9 @@ public class ProductRepository(IBaseRepository _baseRepository) : IProductReposi
     public async Task<ProductEntity> GetByIdAsync(int productId, CancellationToken ct)
     {
         var product = await _baseRepository.GetAll<ProductEntity>()
+            .Include(p => p.ProductCategory)
             .FirstOrDefaultAsync(p => p.Id == productId, ct);
+
         if (product == null)
         {
             throw new Exception("Product not found");
