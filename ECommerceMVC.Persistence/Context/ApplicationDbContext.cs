@@ -114,6 +114,10 @@ public class ApplicationDbContext : DbContext
             .HasOne(p => p.Stock)
             .WithMany(p => p.StockHistories)
             .HasForeignKey(p => p.StockId);
+        modelBuilder.Entity<StockHistoryEntity>()
+            .Property(p => p.Message)
+            .IsRequired()
+            .HasMaxLength(100);
 
     }
 }

@@ -1,10 +1,8 @@
 ﻿namespace ECommerceMVC.Application.Dtos.Stocks;
 
-public class StockDto
+public class StockUpdateDto
 {
     public int ProductQuantity { get; set; }
 
     public int Id { get; set; }
-
-    public IEnumerable<StockHistoryDto> StockHistories { get; set; } = Enumerable.Empty<StockHistoryDto>();
 }

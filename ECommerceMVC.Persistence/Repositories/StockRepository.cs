@@ -16,18 +16,47 @@ public class StockRepository(IBaseRepository _baseRepository) : IStockRepository
         return stock.Id;
     }
 
-    public async Task<StockEntity> GetByProductIdAsync(int productId, CancellationToken ct)
+    public async Task<StockEntity> GetByProductIdWithPagedHistoriesAsync(int productId, int currentPage, int pageSize, CancellationToken ct)
     {
-        var product = await _baseRepository.GetAll<StockEntity>()
+        var stock = await _baseRepository.GetAll<StockEntity>().Include(s => s.StockHistories)
             .FirstOrDefaultAsync(p => p.ProductId == productId, ct);
+        var stockHistories = stock.StockHistories
+            .OrderByDescending(s => s.CreateTimeUtc)
+            .Skip(pageSize * (currentPage - 1))
+            .Take(pageSize)
+            .ToList();
+        stock.StockHistories = stockHistories;
 
-        if (product == null)
+        if (stock == null)
         {
             throw new Exception("Stock not found");
         }
         else
         {
-            return product;
+            return stock;
+        }
+    }
+
+    public async Task<bool> UpdateAsync(StockEntity stock, CancellationToken ct)
+    {
+        _baseRepository.Update<StockEntity>(stock);
+        await _baseRepository.SaveAsync(ct);
+
+        return true;
+    }
+
+    public async Task<StockEntity> GetByIdAsync(int stockId, CancellationToken ct)
+    {
+        var stock = await _baseRepository.GetAll<StockEntity>()
+            .FirstOrDefaultAsync(p => p.Id == stockId, ct);
+
+        if (stock == null)
+        {
+            throw new Exception("Stock not found");
+        }
+        else
+        {
+            return stock;
         }
     }
 }

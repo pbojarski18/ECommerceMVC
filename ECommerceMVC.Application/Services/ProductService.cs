@@ -10,12 +10,14 @@ namespace ECommerceMVC.Application.Services;
 public class ProductService(IProductRepository _productRepository,
                             IMapper _mapper,
                             IProductCategoryRepository _productCategoryRepository,
-                            IStockRepository _stockRepository) : IProductService
+                            IStockRepository _stockRepository,
+                            IStockHistoryRepository _stockHistoryRepository) : IProductService
 {
     private readonly IProductRepository _productRepository = _productRepository;
     private readonly IMapper _mapper = _mapper;
     private readonly IProductCategoryRepository _productCategoryRepository = _productCategoryRepository;
     private readonly IStockRepository _stockRepository = _stockRepository;
+    private readonly IStockHistoryRepository stockHistoryRepository = _stockHistoryRepository;
     public async Task<IEnumerable<ProductDto>> GetAllByFiltersAsync(ProductType productType, CancellationToken ct)
     {
         var productEntities = await _productRepository.GetAllByFiltersAsync(productType, ct);
@@ -41,9 +43,10 @@ public class ProductService(IProductRepository _productRepository,
         }
 
         await _productRepository.AddAsync(productEntity, ct);
-        var stockEntity = new StockEntity { ProductQuantity = 0, CreateTimeUtc = DateTime.UtcNow, ProductId = productEntity.Id};
+        var stockEntity = new StockEntity { ProductQuantity = 0, CreateTimeUtc = DateTime.UtcNow, ProductId = productEntity.Id };
         await _stockRepository.AddAsync(stockEntity, ct);
-
+        var stockHistory = new StockHistoryEntity { ProductQuantity = 0, CreateTimeUtc = DateTime.UtcNow, ProductId = productEntity.Id, StockId = stockEntity.Id, Message = $"Stock's been created for item {productEntity.Name}" };
+        await _stockHistoryRepository.AddAsync(stockHistory, ct);
         return productEntity.Id;
     }
 
@@ -54,7 +57,7 @@ public class ProductService(IProductRepository _productRepository,
 
     public async Task<bool> EditAsync(ProductDto productDto, CancellationToken ct)
     {
-        
+
         var editedProduct = _mapper.Map<ProductEntity>(productDto);
         editedProduct.Id = productDto.Id;
         var productCategory = await _productCategoryRepository.GetByPropertiesAsync(productDto.Brand, productDto.Sex, productDto.ProductType, ct);

@@ -10,6 +10,8 @@ public class StockHistoryEntity : AuditableEntity
 
     public int StockId { get; set; }
 
+    public string Message { get; set; }
+
 
     public virtual StockEntity Stock { get; set; }
 }
