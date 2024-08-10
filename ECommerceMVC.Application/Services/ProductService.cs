@@ -18,6 +18,8 @@ public class ProductService(IProductRepository _productRepository,
     private readonly IProductCategoryRepository _productCategoryRepository = _productCategoryRepository;
     private readonly IStockRepository _stockRepository = _stockRepository;
     private readonly IStockHistoryRepository stockHistoryRepository = _stockHistoryRepository;
+
+
     public async Task<IEnumerable<ProductDto>> GetAllByFiltersAsync(ProductType productType, CancellationToken ct)
     {
         var productEntities = await _productRepository.GetAllByFiltersAsync(productType, ct);
@@ -25,6 +27,14 @@ public class ProductService(IProductRepository _productRepository,
 
         return productDtos;
 
+    }
+
+    public async Task<IEnumerable<ProductDto>> GetPagedByUserFiltersAsync(GetPagedByFiltersTransferDto filters, CancellationToken ct)
+    {
+        var productEntities = await _productRepository.GetPagedByUserFiltersAsync(filters, ct);
+        var productDtos = _mapper.Map<IEnumerable<ProductDto>>(productEntities);
+
+        return productDtos;
     }
 
     public async Task<int> AddAsync(ProductDto productDto, CancellationToken ct)

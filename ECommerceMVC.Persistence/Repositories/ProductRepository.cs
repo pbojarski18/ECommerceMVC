@@ -1,4 +1,5 @@
-﻿using ECommerceMVC.Domain.Entities;
+﻿using ECommerceMVC.Application.Dtos.Products;
+using ECommerceMVC.Domain.Entities;
 using ECommerceMVC.Domain.Enums;
 using ECommerceMVC.Domain.Repositories;
 using Microsoft.EntityFrameworkCore;
@@ -12,14 +13,53 @@ public class ProductRepository(IBaseRepository _baseRepository) : IProductReposi
     public async Task<IEnumerable<ProductEntity>> GetAllByFiltersAsync(ProductType productType, CancellationToken ct)
     {
         var products = await _baseRepository.GetAll<ProductEntity>()
-            .Include(x => x.ProductCategory)
-            .Where(p => p.ProductCategory.ProductType == productType)
-            .ToListAsync(ct);
+                                            .Include(x => x.ProductCategory)
+                                            .Where(p => p.ProductCategory.ProductType == productType)
+                                            .ToListAsync(ct);
 
         return products;
 
     }
 
+    public async Task<IEnumerable<ProductEntity>> GetPagedByUserFiltersAsync(GetPagedByFiltersTransferDto filters, CancellationToken ct)
+    {
+        var query = _baseRepository.GetAll<ProductEntity>()
+            .Include(p => p.ProductCategory)
+            .Where(p => p.ProductCategory.ProductType == filters.ProductType);
+
+
+        if (filters.MinWeight > 0)
+        {
+            query = query.Where(p => p.Weight >= filters.MinWeight);
+        }
+
+        if (filters.MaxWeight > 0)
+        {
+            query = query.Where(p => p.Weight <= filters.MaxWeight);
+        }
+
+        if (filters.MinPrice > 0)
+        {
+            query = query.Where(p => p.Price >= filters.MinPrice);
+        }
+
+        if (filters.MaxPrice > 0)
+        {
+            query = query.Where(p => p.Price <= filters.MaxPrice);
+        }
+
+        if (!string.IsNullOrEmpty(filters.Name))
+        {
+            query = query.Where(p => p.Name.Contains(filters.Name));
+        }
+
+        query = query.OrderBy(p => p.Price)
+            .Skip(filters.CurrentPage * filters.PageSize - filters.PageSize)
+            .Take(filters.PageSize);
+
+        return await query.ToListAsync(ct);
+
+    }
     public async Task<int> AddAsync(ProductEntity product, CancellationToken ct)
     {
         await _baseRepository.AddAsync<ProductEntity>(product, ct);

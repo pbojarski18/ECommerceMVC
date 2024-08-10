@@ -24,6 +24,20 @@ public class ProductController(IProductService _productService, ProductDtoValida
     }
 
     [HttpGet]
+    public async Task<IActionResult> CustomerProduct()
+    {
+        return View();
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> CustomerProduct(GetPagedByFiltersTransferDto filters)
+    {
+        var model = await _productService.GetPagedByUserFiltersAsync(filters, default);
+        return View(model);
+    }
+
+
+    [HttpGet]
     public IActionResult AddProduct()
     {
         return View();

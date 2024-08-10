@@ -45,6 +45,10 @@ public class ApplicationDbContext : DbContext
             .HasOne(p => p.ProductCategory)
             .WithMany(p => p.Products)
             .HasForeignKey(p => p.ProductCategoryId);
+        modelBuilder.Entity<ProductEntity>()
+            .Property(p => p.Weight)
+            .IsRequired(false);
+            
 
         modelBuilder.Entity<StockEntity>()
             .HasKey(p => p.Id);

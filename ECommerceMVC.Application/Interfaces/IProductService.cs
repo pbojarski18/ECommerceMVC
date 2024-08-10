@@ -15,4 +15,6 @@ public interface IProductService
     Task<bool> EditAsync(ProductDto productDto, CancellationToken ct);
 
     Task<ProductDto> GetByIdAsync(int productId, CancellationToken ct);
+
+    Task<IEnumerable<ProductDto>> GetPagedByUserFiltersAsync(GetPagedByFiltersTransferDto filters, CancellationToken ct);
 }
