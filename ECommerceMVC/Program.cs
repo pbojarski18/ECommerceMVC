@@ -5,6 +5,7 @@ using ECommerceMVC.Persistence.Context;
 using ECommerceMVC.Persistence.Repositories;
 using Microsoft.EntityFrameworkCore;
 using ECommerceMVC.Application.Extensions;
+using ECommerceMVC.Infrastructure.FileService;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,6 +17,7 @@ builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<IProductCategoryRepository, ProductCategoryRepository>();
 builder.Services.AddScoped<IStockRepository, StockRepository>();
 builder.Services.AddScoped<IStockHistoryRepository, StockHistoryRepository>();
+builder.Services.AddScoped<IFileSaver, FileSaver>();
 builder.Services.AddApplicationDi();
 var app = builder.Build();
 

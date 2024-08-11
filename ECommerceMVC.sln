@@ -15,9 +15,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ECommerceMVC.Domain", "ECom
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ECommerceMVC.Persistence", "ECommerceMVC.Persistence\ECommerceMVC.Persistence.csproj", "{E3781A64-65C0-4DE0-8396-30234641AAA8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ECommerceMVC.Application", "ECommerceMVC.Application\ECommerceMVC.Application.csproj", "{D007712E-D8DB-4CAF-8275-592D7302C927}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ECommerceMVC.Application", "ECommerceMVC.Application\ECommerceMVC.Application.csproj", "{D007712E-D8DB-4CAF-8275-592D7302C927}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ECommerceMVC.Application.UnitTests", "ECommerceMVC.Application.UnitTests\ECommerceMVC.Application.UnitTests.csproj", "{09B9F3A2-4C59-471C-9484-E1A0414316DC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ECommerceMVC.Application.UnitTests", "ECommerceMVC.Application.UnitTests\ECommerceMVC.Application.UnitTests.csproj", "{09B9F3A2-4C59-471C-9484-E1A0414316DC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ECommerceMVC.Infrastructure", "ECommerceMVC.Infrastructure\ECommerceMVC.Infrastructure.csproj", "{FEC962A6-D828-4B6A-B722-5C07383A0E8C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,6 +47,10 @@ Global
 		{09B9F3A2-4C59-471C-9484-E1A0414316DC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{09B9F3A2-4C59-471C-9484-E1A0414316DC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{09B9F3A2-4C59-471C-9484-E1A0414316DC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FEC962A6-D828-4B6A-B722-5C07383A0E8C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FEC962A6-D828-4B6A-B722-5C07383A0E8C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FEC962A6-D828-4B6A-B722-5C07383A0E8C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FEC962A6-D828-4B6A-B722-5C07383A0E8C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -55,6 +61,7 @@ Global
 		{E3781A64-65C0-4DE0-8396-30234641AAA8} = {4C9FF91B-7640-4C3A-AFB7-B1D2F2B9D266}
 		{D007712E-D8DB-4CAF-8275-592D7302C927} = {50022367-4004-424C-8475-FDAA6F70CFA8}
 		{09B9F3A2-4C59-471C-9484-E1A0414316DC} = {B3B5AC9E-1653-4E06-A51A-9AA2D10335C5}
+		{FEC962A6-D828-4B6A-B722-5C07383A0E8C} = {4C9FF91B-7640-4C3A-AFB7-B1D2F2B9D266}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {7A4FCD0F-23A4-494D-8FF5-9787A2801CA4}

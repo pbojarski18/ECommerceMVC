@@ -3,14 +3,17 @@ using ECommerceMVC.Application.Interfaces;
 using ECommerceMVC.Application.Validators.Product;
 using ECommerceMVC.Domain.Entities;
 using ECommerceMVC.Domain.Enums;
+using ECommerceMVC.Infrastructure.FileService;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ECommerceMVC.Controllers;
 
-public class ProductController(IProductService _productService, ProductDtoValidator _productDtoValidator) : Controller
+public class ProductController(IProductService _productService, ProductDtoValidator _productDtoValidator, IFileSaver _fileSaver) : Controller
 {
     private readonly IProductService _productService = _productService;
     private readonly ProductDtoValidator _productDtoValidator = _productDtoValidator;
+    private readonly IFileSaver _fileSaver = _fileSaver;
+
     public IActionResult Index()
     {
         return View();
@@ -44,16 +47,30 @@ public class ProductController(IProductService _productService, ProductDtoValida
     }
 
     [HttpPost]
-    public async Task<IActionResult> AddProduct(ProductDto productDto)
+    public async Task<IActionResult> AddProduct(ProductDto productDto, IFormFile file)
     {
-        var result = await _productDtoValidator.ValidateAsync(productDto);
-        if (result.IsValid)
+        // Sprawdź, czy plik został przesłany
+        if (file == null || file.Length == 0)
         {
-            var model = await _productService.AddAsync(productDto, default);
-            return RedirectToAction(nameof(Index));
+            ModelState.AddModelError("File", "No file uploaded.");
+            return View(productDto);
         }
+      
+            var filePath = await _fileSaver.SaveFile(file);
 
-        return View(productDto);
+            // Przypisz ścieżkę obrazu do produktu
+            productDto.ImagePath = filePath;
+
+            var result = await _productDtoValidator.ValidateAsync(productDto);
+            if (!result.IsValid)
+            {
+                return View(productDto);
+            }
+            // Dodaj produkt do bazy danych
+            await _productService.AddAsync(productDto, default);
+        
+
+        return RedirectToAction(nameof(Index));
     }
 
     [HttpPost]
@@ -83,4 +100,5 @@ public class ProductController(IProductService _productService, ProductDtoValida
 
         return View(productDto);
     }
+
 }

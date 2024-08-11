@@ -8,80 +8,122 @@
             };
 }
 
-<h2 class="text-center my-4">Product List</h2>
 
-<div class="container">
-    <form method="post" asp-action="CustomerProduct" class="mb-4">
-        <div class="form-group">
-            <label for="productType">Select Product Type:</label>
-            <select id="productType" name="productType" class="form-control">
-                <option value="">All</option>
-                <option value="1">Rackets</option>
-                <option value="2">Balls</option>
-                <option value="3">Bags</option>
-                <option value="4">Accessories</option>
-            </select>
+<div class="container mb-5">
+    <h2 class="d-flex justify-cotent-start">Products</h2>
+
+    <form method="post" asp-action="CustomerProduct" class="d-flex flex-column gap-2 border border-dark mb-5">
+        <div class="d-flex flex-row">
+            <div class="form-group">
+                <label for="productType">Select Product Type:</label>
+                <select id="productType" name="productType" class="form-control">
+                    <option value="">All</option>
+                    <option value="1">Rackets</option>
+                    <option value="2">Balls</option>
+                    <option value="3">Bags</option>
+                    <option value="4">Accessories</option>
+                </select>
+            </div>
         </div>
-        <input type="hidden" name="CurrentPage" value="@filters.CurrentPage" />
-        <input type="hidden" name="PageSize" value="@filters.PageSize" />
-        <div class="form-group">
-            <label for="minWeight">Minimum Weight:</label>
-            <input type="number" id="minWeight" name="minWeight" class="form-control" />
+        <div class="d-flex flex-row gap-2">
+            <input type="hidden" name="CurrentPage" value="@filters.CurrentPage" />
+            <input type="hidden" name="PageSize" value="@filters.PageSize" />
+            <div class="form-group">
+                <input type="number" id="minWeight" name="minWeight" class="form-control" placeholder="Minimum Weight" />
+            </div>
+
+            <div class="form-group">
+                <input type="number" id="maxWeight" name="maxWeight" class="form-control" placeholder="Maximum Weight" />
+            </div>
+
+            <div class="form-group">
+                <input type="number" id="minPrice" name="minPrice" class="form-control" placeholder="Minimum Price" />
+            </div>
+
+            <div class="form-group">
+                <input type="number" id="maxPrice" name="maxPrice" class="form-control" placeholder="Maximum Price" />
+            </div>
+
+            <div class="form-group">
+                <input type="text" id="name" name="name" class="form-control" placeholder="Name" />
+            </div>
         </div>
 
-        <div class="form-group">
-            <label for="maxWeight">Maximum Weight:</label>
-            <input type="number" id="maxWeight" name="maxWeight" class="form-control" />
-        </div>
+        <div class="d-flex flex-row">
 
-        <div class="form-group">
-            <label for="minPrice">Minimum Price:</label>
-            <input type="number" id="minPrice" name="minPrice" class="form-control" />
+            <div>
+                <button type="submit" class="btn btn-secondary">Search</button>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" onclick="increasePageAndSubmit()">
+                    <path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8" />
+                </svg>
+            </div>
         </div>
-
-        <div class="form-group">
-            <label for="maxPrice">Maximum Price:</label>
-            <input type="number" id="maxPrice" name="maxPrice" class="form-control" />
-        </div>
-
-        <div class="form-group">
-            <label for="name">Product Name:</label>
-            <input type="text" id="name" name="name" class="form-control" />
-        </div>
-
-        <button type="submit" class="btn btn-primary">Filter</button>
     </form>
 
-    <table class="table table-striped">
-        <thead class="thead-dark">
-            <tr>
-                <th>Name</th>
-                <th>Price</th>
-                <th>Description</th>
-                <th>Brand</th>
-                <th>Sex</th>
-            </tr>
-        </thead>
-        <tbody>
-            @if (Model != null && Model.Any())
-            {
-                foreach (var product in Model)
+
+
+    @if (Model != null && Model.Any())
+    {
+        <div class="container mb-5">
+            <h2 class="text-center mb-4">Our Products</h2>
+            <div class="row justify-content-center">
+                @foreach (var product in Model)
                 {
-                    <tr>
-                        <td>@product.Name</td>
-                        <td>@product.Price.ToString("C")</td> <!-- Format price as currency -->
-                        <td>@product.Description</td>
-                        <td>@product.Brand</td>
-                        <td>@product.Sex</td>
-                    </tr>
+                    <div class="col-md-4 col-sm-6 mb-4">
+                        <div class="card shadow-sm border-light">
+                            <img class="card-img-top" src="@product.ImagePath" alt="@product.Name" style="height: 200px; object-fit: cover;" />
+                            <div class="card-body d-flex flex-column">
+                                <h5 class="card-title">@product.Name @product.Brand</h5>
+                                <p class="card-text text-muted">
+                                    @if (product.Description.Length > 50)
+                                    {
+                                        @product.Description.Substring(0, 50)
+                                        
+                                            }
+                                    else
+                                    {
+                                        @product.Description
+                                    }
+                                </p>
+                                <div class="mt-auto">
+                                    <p class="card-text text-primary">@product.Price.ToString("C")</p>
+                                    <button class="btn btn-outline-primary">View Details</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 }
-            }
-            else
-            {
-                <tr>
-                    <td colspan="6" class="text-center">No products found.</td>
-                </tr>
-            }
-        </tbody>
-    </table>
+            </div>
+        </div>
+    }
+    <div class="p-5" />
 </div>
+
+<style>
+    .card {
+        transition: transform 0.2s;
+    }
+
+        .card:hover {
+            transform: scale(1.05);
+        }
+
+    .card-title {
+        font-weight: bold;
+    }
+
+    .card-text {
+        overflow-wrap: break-word;
+        word-wrap: break-word;
+        hyphens: auto;
+    }
+</style>
+
+<script>
+    function increasePageAndSubmit() {
+        var currentPageInput = document.querySelector('input[name="CurrentPage"]');
+        currentPageInput.value = parseInt(currentPageInput.value) + 1;
+
+        currentPageInput.form.submit();
+    }
+</script>
