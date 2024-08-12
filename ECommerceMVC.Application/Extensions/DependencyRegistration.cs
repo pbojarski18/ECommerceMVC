@@ -16,6 +16,7 @@ public static class DependencyRegistration
         services.AddFluentValidationAutoValidation();
         services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
         services.AddScoped<IStockService, StockService>();
+        services.AddScoped<IOrderService, OrderService>();
         return services;
     }
 

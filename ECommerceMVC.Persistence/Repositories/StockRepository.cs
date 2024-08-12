@@ -59,4 +59,19 @@ public class StockRepository(IBaseRepository _baseRepository) : IStockRepository
             return stock;
         }
     }
+
+    public async Task<StockEntity> GetByProductIdAsync(int productId, CancellationToken ct)
+    {
+        var stock = await _baseRepository.GetAll<StockEntity>()
+            .FirstOrDefaultAsync(p => p.ProductId == productId, ct);
+
+        if (stock == null)
+        {
+            throw new Exception("Stock not found");
+        }
+        else
+        {
+            return stock;
+        }
+    }
 }

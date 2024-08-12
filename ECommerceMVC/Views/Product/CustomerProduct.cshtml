@@ -78,8 +78,8 @@
                                     @if (product.Description.Length > 50)
                                     {
                                         @product.Description.Substring(0, 50)
-                                        
-                                            }
+
+                                    }
                                     else
                                     {
                                         @product.Description
@@ -88,6 +88,9 @@
                                 <div class="mt-auto">
                                     <p class="card-text text-primary">@product.Price.ToString("C")</p>
                                     <button class="btn btn-outline-primary">View Details</button>
+                                    <form method="get" asp-action="Index" asp-controller="Order" asp-route-id="@product.Id" style="display:inline;">
+                                        <button type="submit" class="btn btn-danger btn-sm">Order</button>
+                                    </form>
                                 </div>
                             </div>
                         </div>
@@ -98,6 +101,8 @@
     }
     <div class="p-5" />
 </div>
+
+
 
 <style>
     .card {

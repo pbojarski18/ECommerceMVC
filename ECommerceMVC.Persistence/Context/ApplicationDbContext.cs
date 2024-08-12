@@ -48,7 +48,7 @@ public class ApplicationDbContext : DbContext
         modelBuilder.Entity<ProductEntity>()
             .Property(p => p.Weight)
             .IsRequired(false);
-            
+
 
         modelBuilder.Entity<StockEntity>()
             .HasKey(p => p.Id);
@@ -93,6 +93,10 @@ public class ApplicationDbContext : DbContext
         modelBuilder.Entity<OrderEntity>()
             .Property(p => p.PhoneNumber)
             .IsRequired();
+        modelBuilder.Entity<OrderEntity>()
+            .Property(p => p.OrderStatus)
+            .IsRequired()
+            .HasConversion<string>();
 
         modelBuilder.Entity<ProductCategoryEntity>()
             .HasKey(p => p.Id);
