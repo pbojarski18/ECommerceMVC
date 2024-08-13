@@ -21,6 +21,7 @@ public class ProductEntity : AuditableEntity
 
     public virtual StockEntity Stock { get; set; }
 
+    public virtual ICollection<BasketEntity> Baskets { get; set; }
 
     public virtual ICollection<ProductOrderEntity> ProductOrders { get; set; }
 }

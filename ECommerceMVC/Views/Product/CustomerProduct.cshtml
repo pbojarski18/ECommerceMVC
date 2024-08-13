@@ -91,6 +91,9 @@
                                     <form method="get" asp-action="Index" asp-controller="Order" asp-route-id="@product.Id" style="display:inline;">
                                         <button type="submit" class="btn btn-danger btn-sm">Order</button>
                                     </form>
+                                    <form method="post" asp-action="AddBasket" asp-controller="Basket" asp-route-productId="@product.Id" asp-route-totalCost="@product.Price" style="display:inline;">
+                                        <button type="submit" class="btn btn-danger btn-sm">Add to basket</button>
+                                    </form>
                                 </div>
                             </div>
                         </div>

@@ -17,6 +17,8 @@ public class ApplicationDbContext : DbContext
 
     public DbSet<StockHistoryEntity> StockHistories { get; set; }
 
+    public DbSet<BasketEntity> Baskets { get; set; }
+
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
     {
 
@@ -127,6 +129,24 @@ public class ApplicationDbContext : DbContext
             .IsRequired()
             .HasMaxLength(100);
 
+        modelBuilder.Entity<BasketEntity>()
+            .HasKey(p => p.Id);
+        modelBuilder.Entity<BasketEntity>()
+            .Property(p => p.ProductId)
+            .IsRequired();
+        modelBuilder.Entity<BasketEntity>()
+            .Property(p => p.ProductQuantity)
+            .IsRequired();
+        modelBuilder.Entity<BasketEntity>()
+            .Property(p => p.TotalCost)
+            .IsRequired();
+        modelBuilder.Entity<BasketEntity>()
+            .Property(p => p.IsActive)
+            .IsRequired();
+        modelBuilder.Entity<BasketEntity>()
+            .HasOne(p => p.Product)
+            .WithMany(p => p.Baskets)
+            .HasForeignKey(p => p.ProductId); 
     }
 }
 
