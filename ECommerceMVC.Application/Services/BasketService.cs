@@ -24,8 +24,35 @@ public class BasketService(IBasketRepository _basketRepository,
     public async Task<IEnumerable<BasketDto>> GetAllActiveAsync(CancellationToken ct)
     {
         var basketEntities = await _basketRepository.GetAllActiveAsync(ct);
-        var basketDto = _mapper.Map<IEnumerable<BasketDto>>(basketEntities);
+        var basketDtos = _mapper.Map<IEnumerable<BasketDto>>(basketEntities);
 
-        return basketDto;
+        return MergeBaskets(basketDtos);
+    }
+
+    public async Task<bool> RemoveAsync (int productId, CancellationToken ct)
+    {
+        return await _basketRepository.DeactivateByProductId(productId, ct);
+    }
+
+    private IEnumerable<BasketDto> MergeBaskets(IEnumerable<BasketDto> baskets)
+    {
+        List<BasketDto> mergedBaskets = new List<BasketDto>();
+
+        foreach (var basket in baskets)
+        {
+            if (!mergedBaskets.Select(p => p.Product.Id).Contains(basket.Product.Id))
+            {
+                mergedBaskets.Add(basket);
+            }
+            else
+            {
+                var mergedBasket = mergedBaskets.FirstOrDefault(p => p.Product.Id == basket.Product.Id);
+                mergedBasket.ProductQuantity = mergedBasket.ProductQuantity + basket.ProductQuantity;
+                mergedBasket.TotalCost = mergedBasket.TotalCost + basket.TotalCost;
+            }
+        }
+
+        return mergedBaskets;
+
     }
 }
