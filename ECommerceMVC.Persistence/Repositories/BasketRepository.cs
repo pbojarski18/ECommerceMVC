@@ -16,13 +16,13 @@ public class BasketRepository(IBaseRepository _baseRepository) : IBasketReposito
         return basket.Id;
     }
 
-    public async Task<bool> DeactivateByProductId(int productId, CancellationToken ct)
+    public async Task<bool> DeactivateByProductId(string userId, int productId, CancellationToken ct)
     {
         var baskets = await _baseRepository.GetAll<BasketEntity>()
                                            .Include(p => p.Product)
-                                           .Where(p => p.ProductId == productId && p.IsActive)
+                                           .Where(p => p.ProductId == productId && p.UserId == userId && p.IsActive)
                                            .ToListAsync(ct);
-       
+
         foreach (var basket in baskets)
         {
             basket.IsActive = false;
@@ -32,11 +32,12 @@ public class BasketRepository(IBaseRepository _baseRepository) : IBasketReposito
         await _baseRepository.SaveAsync(ct);
         return true;
     }
-    public async Task<IEnumerable<BasketEntity>> GetAllActiveAsync(CancellationToken ct)
+    public async Task<IEnumerable<BasketEntity>> GetAllActiveAsync(string userId, CancellationToken ct)
     {
+
         return await _baseRepository.GetAll<BasketEntity>()
                                     .Include(p => p.Product)
-                                    .Where(p => p.IsActive)
+                                    .Where(p => p.IsActive && p.UserId == userId)
                                     .ToListAsync(ct);
 
 

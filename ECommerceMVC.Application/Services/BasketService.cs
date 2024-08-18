@@ -21,17 +21,17 @@ public class BasketService(IBasketRepository _basketRepository,
         return basketEntity.Id;
     }
 
-    public async Task<IEnumerable<BasketDto>> GetAllActiveAsync(CancellationToken ct)
+    public async Task<IEnumerable<BasketDto>> GetAllActiveAsync(string userId,CancellationToken ct)
     {
-        var basketEntities = await _basketRepository.GetAllActiveAsync(ct);
+        var basketEntities = await _basketRepository.GetAllActiveAsync(userId, ct);
         var basketDtos = _mapper.Map<IEnumerable<BasketDto>>(basketEntities);
 
         return MergeBaskets(basketDtos);
     }
 
-    public async Task<bool> RemoveAsync (int productId, CancellationToken ct)
+    public async Task<bool> RemoveAsync (string userId, int productId, CancellationToken ct)
     {
-        return await _basketRepository.DeactivateByProductId(productId, ct);
+        return await _basketRepository.DeactivateByProductId(userId ,productId, ct);
     }
 
     private IEnumerable<BasketDto> MergeBaskets(IEnumerable<BasketDto> baskets)

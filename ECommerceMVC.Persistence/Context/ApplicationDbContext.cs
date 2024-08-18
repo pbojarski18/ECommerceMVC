@@ -1,9 +1,11 @@
 ﻿using ECommerceMVC.Domain.Entities;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace ECommerceMVC.Persistence.Context;
 
-public class ApplicationDbContext : DbContext
+public class ApplicationDbContext : IdentityDbContext<IdentityUser>
 {
     public DbSet<ProductEntity> Products { get; set; }
 
@@ -64,6 +66,9 @@ public class ApplicationDbContext : DbContext
         modelBuilder.Entity<ProductOrderEntity>()
             .HasKey(p => p.Id);
         modelBuilder.Entity<ProductOrderEntity>()
+            .Property(p => p.ProductQuantity)
+            .IsRequired();
+        modelBuilder.Entity<ProductOrderEntity>()
             .HasOne(p => p.Order)
             .WithMany(p => p.ProductOrders)
             .HasForeignKey(p => p.OrderId);
@@ -99,6 +104,10 @@ public class ApplicationDbContext : DbContext
             .Property(p => p.OrderStatus)
             .IsRequired()
             .HasConversion<string>();
+        modelBuilder.Entity<OrderEntity>()
+            .HasOne(p => p.User)
+            .WithMany()
+            .HasForeignKey(p => p.UserId);
 
         modelBuilder.Entity<ProductCategoryEntity>()
             .HasKey(p => p.Id);
@@ -146,7 +155,11 @@ public class ApplicationDbContext : DbContext
         modelBuilder.Entity<BasketEntity>()
             .HasOne(p => p.Product)
             .WithMany(p => p.Baskets)
-            .HasForeignKey(p => p.ProductId); 
+            .HasForeignKey(p => p.ProductId);
+        modelBuilder.Entity<BasketEntity>()
+           .HasOne(p => p.User)
+           .WithMany()
+           .HasForeignKey(p => p.UserId);
     }
 }
 

@@ -23,4 +23,5 @@ public class OrderController(IOrderService _orderService) : Controller
         var model = await _orderService.AddAsync(createOrderDto, default);
         return RedirectToAction("Index");
     }
+
 }

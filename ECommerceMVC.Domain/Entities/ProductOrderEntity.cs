@@ -8,6 +8,7 @@ public class ProductOrderEntity : AuditableEntity
 
     public int OrderId { get; set; }
 
+    public int ProductQuantity { get; set; }
 
     public virtual OrderEntity Order { get; set; }
 

@@ -14,6 +14,7 @@ public class BasketProfile : Profile
             .ForMember(dest => dest.CreateTimeUtc, opt => opt.MapFrom(src => DateTime.UtcNow))
             .ForMember(dest => dest.TotalCost, opt => opt.MapFrom(src => src.TotalCost))
             .ForMember(dest => dest.IsActive, opt => opt.MapFrom(src => src.IsActive))
+            .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.UserId))
             .ForMember(dest => dest.Product, opt => opt.Ignore());
 
         CreateMap<BasketEntity, BasketDto>()
