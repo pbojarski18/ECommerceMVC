@@ -10,13 +10,15 @@ public class OrderService(IOrderRepository _orderRepository,
                             IMapper _mapper,
                             IProductOrderRepository _productOrderRepository,
                             IStockRepository _stockRepository,
-                            IStockHistoryRepository _stockHistoryRepository) : IOrderService
+                            IStockHistoryRepository _stockHistoryRepository,
+                            IBasketRepository _basketRepository) : IOrderService
 {
     private readonly IMapper _mapper = _mapper;
     private readonly IOrderRepository _orderRepository = _orderRepository;
     private readonly IProductOrderRepository _productOrderRepository = _productOrderRepository;
     private readonly IStockRepository _stockRepository = _stockRepository;
     private readonly IStockHistoryRepository _stockHistoryRepository = _stockHistoryRepository;
+    private readonly IBasketRepository _basketRepository = _basketRepository;
 
     public async Task<int> AddAsync(CreateOrderDto createOrderDto, CancellationToken ct)
     {
@@ -25,16 +27,28 @@ public class OrderService(IOrderRepository _orderRepository,
         orderEntity.OrderStatus = Domain.Enums.OrderStatusType.Ordered;
         await _orderRepository.AddAsync(orderEntity, ct);
 
-        var productOrderEntity = new ProductOrderEntity { OrderId = orderEntity.Id, ProductId = createOrderDto.ProductId };
-        await _productOrderRepository.AddAsync(productOrderEntity, ct);
+        var userBaskets = await _basketRepository.GetAllActiveAsync(createOrderDto.UserId, ct);
+        var productOrderEntities = new List<ProductOrderEntity>();
+        foreach (var userBasket in userBaskets)
+        {
+            ProductOrderEntity productOrderEntity = new ProductOrderEntity() { ProductId = userBasket.ProductId, ProductQuantity = userBasket.ProductQuantity, OrderId = orderEntity.Id, CreateTimeUtc = DateTimeOffset.UtcNow };
+            productOrderEntities.Add(productOrderEntity);
 
-        var stock = await _stockRepository.GetByProductIdAsync(createOrderDto.ProductId, ct);
-        stock.ProductQuantity = stock.ProductQuantity - 1;
-        await _stockRepository.UpdateAsync(stock, ct);
+        }
+        await _productOrderRepository.AddRangeAsync(productOrderEntities, ct);
 
-        var stockHistory = new StockHistoryEntity { ProductQuantity = stock.ProductQuantity, ProductId = stock.ProductId, StockId = stock.Id, Message = $"Stock reduced by 1 due to order {orderEntity.Id}", CreateTimeUtc = DateTime.UtcNow };
-        await _stockHistoryRepository.AddAsync(stockHistory, ct);
 
+        var stocks = await _stockRepository.GetByProductsIdsAsync(productOrderEntities.Select(p => p.ProductId).Distinct(), ct);
+        var stockHistories = new List<StockHistoryEntity>();
+        foreach (var stock in stocks)
+        {
+            stock.ProductQuantity = stock.ProductQuantity - productOrderEntities.Where(p => p.ProductId == stock.ProductId).Select(p => p.ProductQuantity).Sum();
+            var stockHistory = new StockHistoryEntity { ProductQuantity = stock.ProductQuantity, ProductId = stock.ProductId, StockId = stock.Id, Message = $"Stock reduced by {productOrderEntities.Where(p => p.ProductId == stock.ProductId).Select(p => p.ProductQuantity).Sum()} due to order {orderEntity.Id}", CreateTimeUtc = DateTime.UtcNow };
+            stockHistories.Add(stockHistory);
+        }
+        await _stockRepository.UpdateRangeAsync(stocks, ct);
+        await _stockHistoryRepository.AddRangeAsync(stockHistories, ct);
+        await _basketRepository.DeactivateUserBasketsAsync(createOrderDto.UserId, ct);
         return orderEntity.Id;
     }
 }

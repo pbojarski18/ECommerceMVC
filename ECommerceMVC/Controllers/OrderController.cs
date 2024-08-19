@@ -2,18 +2,22 @@
 using ECommerceMVC.Application.Interfaces;
 using ECommerceMVC.Application.Services;
 using ECommerceMVC.Domain.Enums;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ECommerceMVC.Controllers;
 
-public class OrderController(IOrderService _orderService) : Controller
+public class OrderController(IOrderService _orderService,
+                             UserManager<IdentityUser> _userManager) : Controller
 {
     private readonly IOrderService _orderService = _orderService;
+    private readonly UserManager<IdentityUser> _userManager = _userManager;
 
     [HttpGet]
-    public IActionResult Index(int id)
+    public IActionResult Index(string userId)
     {
-        var model = new CreateOrderDto { ProductId = id };
+        userId = _userManager.GetUserId(User);
+        var model = new CreateOrderDto { UserId = userId };
         return View(model);
     }
 

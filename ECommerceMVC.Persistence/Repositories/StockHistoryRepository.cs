@@ -14,4 +14,12 @@ public class StockHistoryRepository(IBaseRepository _baseRepository) : IStockHis
 
         return stockHistoryEntity.Id;
     }
+
+    public async Task<bool> AddRangeAsync(IEnumerable<StockHistoryEntity> stockHistories, CancellationToken ct)
+    {
+        _baseRepository.AddRange(stockHistories);
+        await _baseRepository.SaveAsync(ct);
+
+        return true;
+    }
 }

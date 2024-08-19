@@ -18,6 +18,6 @@ public class CreateOrderDto
 
     public string PhoneNumber { get; set; } = string.Empty;
 
-    public int ProductId { get; set; }
+    public string UserId { get; set; }
 
 }

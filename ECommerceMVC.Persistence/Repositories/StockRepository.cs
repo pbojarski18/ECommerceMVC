@@ -1,4 +1,5 @@
-﻿using ECommerceMVC.Domain.Entities;
+﻿using ECommerceMVC.Application.Services;
+using ECommerceMVC.Domain.Entities;
 using ECommerceMVC.Domain.Repositories;
 using Microsoft.EntityFrameworkCore;
 
@@ -45,6 +46,14 @@ public class StockRepository(IBaseRepository _baseRepository) : IStockRepository
         return true;
     }
 
+    public async Task<bool> UpdateRangeAsync(IEnumerable<StockEntity> stocks, CancellationToken ct)
+    {
+        _baseRepository.UpdateRange(stocks);
+        await _baseRepository.SaveAsync(ct);
+
+        return true;
+    }
+
     public async Task<StockEntity> GetByIdAsync(int stockId, CancellationToken ct)
     {
         var stock = await _baseRepository.GetAll<StockEntity>()
@@ -73,5 +82,13 @@ public class StockRepository(IBaseRepository _baseRepository) : IStockRepository
         {
             return stock;
         }
+    }
+
+    public async Task<IEnumerable<StockEntity>> GetByProductsIdsAsync(IEnumerable<int> productIds, CancellationToken ct)
+    {
+        var stocks = _baseRepository.GetAll<StockEntity>()
+            .Where(p => productIds.Contains(p.ProductId));
+
+        return await stocks.ToListAsync(ct);
     }
 }

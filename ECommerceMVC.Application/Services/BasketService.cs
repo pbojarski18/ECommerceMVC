@@ -21,7 +21,7 @@ public class BasketService(IBasketRepository _basketRepository,
         return basketEntity.Id;
     }
 
-    public async Task<IEnumerable<BasketDto>> GetAllActiveAsync(string userId,CancellationToken ct)
+    public async Task<IEnumerable<BasketDto>> GetAllActiveAsync(string userId, CancellationToken ct)
     {
         var basketEntities = await _basketRepository.GetAllActiveAsync(userId, ct);
         var basketDtos = _mapper.Map<IEnumerable<BasketDto>>(basketEntities);
@@ -31,7 +31,7 @@ public class BasketService(IBasketRepository _basketRepository,
 
     public async Task<bool> RemoveAsync (string userId, int productId, CancellationToken ct)
     {
-        return await _basketRepository.DeactivateByProductId(userId ,productId, ct);
+        return await _basketRepository.DeactivateByProductIdAsync(userId ,productId, ct);
     }
 
     private IEnumerable<BasketDto> MergeBaskets(IEnumerable<BasketDto> baskets)

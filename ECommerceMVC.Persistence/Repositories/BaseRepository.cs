@@ -32,4 +32,14 @@ public class BaseRepository(ApplicationDbContext _applicationDbContext) : IBaseR
 
         _applicationDbContext.Update(entity);
     }
+
+    public void AddRange<TEntity>(IEnumerable<TEntity> entity) where TEntity : class
+    {
+        _applicationDbContext.AddRange(entity);
+    }
+
+    public void UpdateRange<TEntity>(IEnumerable<TEntity> entity) where TEntity: class
+    {
+        _applicationDbContext.UpdateRange(entity);
+    }
 }

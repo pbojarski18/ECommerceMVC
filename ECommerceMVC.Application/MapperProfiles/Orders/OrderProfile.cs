@@ -15,6 +15,7 @@ public class OrderProfile : Profile
             .ForMember(dest => dest.UserAddress, opt => opt.MapFrom(src => src.UserAddress))
             .ForMember(dest => dest.UserCity, opt => opt.MapFrom(src => src.UserCity))
             .ForMember(dest => dest.PostalCode, opt => opt.MapFrom(src => src.PostalCode))
-            .ForMember(dest => dest.PhoneNumber, opt => opt.MapFrom(src => src.PhoneNumber));
+            .ForMember(dest => dest.PhoneNumber, opt => opt.MapFrom(src => src.PhoneNumber))
+            .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.UserId));
     }
 }

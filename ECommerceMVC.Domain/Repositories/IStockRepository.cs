@@ -13,4 +13,8 @@ public interface IStockRepository
     Task<StockEntity> GetByIdAsync(int stockId, CancellationToken ct);
 
     Task<StockEntity> GetByProductIdAsync(int productId, CancellationToken ct);
+
+    Task<IEnumerable<StockEntity>> GetByProductsIdsAsync(IEnumerable<int> productIds, CancellationToken ct);
+
+    Task<bool> UpdateRangeAsync(IEnumerable<StockEntity> stocks, CancellationToken ct);
 }
