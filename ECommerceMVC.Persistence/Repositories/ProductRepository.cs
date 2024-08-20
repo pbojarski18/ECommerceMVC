@@ -25,6 +25,7 @@ public class ProductRepository(IBaseRepository _baseRepository) : IProductReposi
     {
         var query = _baseRepository.GetAll<ProductEntity>()
             .Include(p => p.ProductCategory)
+            .Include(p => p.Stock)
             .Where(p => p.ProductCategory.ProductType == filters.ProductType);
 
 

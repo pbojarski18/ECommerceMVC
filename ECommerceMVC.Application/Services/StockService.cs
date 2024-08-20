@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using ECommerceMVC.Application.Abstraction;
 using ECommerceMVC.Application.Dtos.Stocks;
 using ECommerceMVC.Application.Interfaces;
 using ECommerceMVC.Domain.Entities;
@@ -8,11 +9,13 @@ namespace ECommerceMVC.Application.Services;
 
 public class StockService(IStockRepository _stockRepository,
                           IMapper _mapper,
-                          IStockHistoryRepository _stockHistoryRepository) : IStockService
+                          IStockHistoryRepository _stockHistoryRepository,
+                          IUnitOfWork _unitOfWork) : IStockService
 {
     private readonly IStockRepository _stockRepository = _stockRepository;
     private readonly IMapper _mapper = _mapper;
     private readonly IStockHistoryRepository _stockHistoryRepository = _stockHistoryRepository;
+    private readonly IUnitOfWork _unitOfWork = _unitOfWork;
 
     public async Task<StockDto> GetByProductIdWithPagedHistoriesAsync(int productId, int currentPage, int pageSize, CancellationToken ct)
     {
@@ -24,20 +27,29 @@ public class StockService(IStockRepository _stockRepository,
 
     public async Task<bool> UpdateAsync(StockUpdateDto stockUpdateDto, CancellationToken ct)
     {
-        var stock = await _stockRepository.GetByIdAsync(stockUpdateDto.Id, ct);
-        stock.ProductQuantity += stockUpdateDto.ProductQuantity;
-        await _stockRepository.UpdateAsync(stock, ct);
-        string message = "";
-        if (stockUpdateDto.ProductQuantity > 0)
+        using var transaction = await _unitOfWork.BeginTransactionAsync();
+        try
         {
-            message = $"Quantity has been increased by {stockUpdateDto.ProductQuantity}";
+            var stock = await _stockRepository.GetByIdAsync(stockUpdateDto.Id, ct);
+            stock.ProductQuantity += stockUpdateDto.ProductQuantity;
+            await _stockRepository.UpdateAsync(stock, ct);
+            string message = "";
+            if (stockUpdateDto.ProductQuantity > 0)
+            {
+                message = $"Quantity has been increased by {stockUpdateDto.ProductQuantity}";
+            }
+            else
+            {
+                message = $"Quantity has been decreased by {stockUpdateDto.ProductQuantity.ToString().Substring(1)}";
+            }
+            var stockHistory = new StockHistoryEntity { ProductQuantity = stock.ProductQuantity, CreateTimeUtc = DateTime.UtcNow, ProductId = stock.ProductId, StockId = stock.Id, Message = message };
+            await _stockHistoryRepository.AddAsync(stockHistory, ct);
+            return true;
         }
-        else
+        catch (Exception ex)
         {
-            message = $"Quantity has been decreased by {stockUpdateDto.ProductQuantity.ToString().Substring(1)}";
+            transaction.Rollback();
+            throw new Exception(ex.Message);
         }
-        var stockHistory = new StockHistoryEntity { ProductQuantity = stock.ProductQuantity, CreateTimeUtc = DateTime.UtcNow, ProductId = stock.ProductId, StockId = stock.Id, Message = message };
-        await _stockHistoryRepository.AddAsync(stockHistory, ct);
-        return true;
     }
 }

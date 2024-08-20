@@ -87,11 +87,22 @@
                                 </p>
                                 <div class="mt-auto">
                                     <p class="card-text text-primary">@product.Price.ToString("C")</p>
-                                    <button class="btn btn-outline-primary">View Details</button>                                   
-                                    <button type="button" class="btn btn-danger btn-sm"
-                                            onclick="openBasketModal(@product.Id, @product.Price)">
-                                        Add to basket
-                                    </button>
+                                    <button class="btn btn-outline-primary">View Details</button>
+                                    @if (product.ProductQuantity > 0)
+                                    {
+                                        <button type="button" class="btn btn-danger btn-sm"
+                                                onclick="openBasketModal(@product.Id, @product.Price)">
+                                            Add to basket
+                                        </button>
+                                    }
+                                    else
+                                    {
+                                        <button disabled type="button" class="btn btn-danger btn-sm"
+                                                onclick="openBasketModal(@product.Id, @product.Price)">
+                                            Add to basket
+                                        </button>
+                                        <span>Currently unavailable.</span>
+                                    }
                                 </div>
                             </div>
                         </div>

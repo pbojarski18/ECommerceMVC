@@ -1,11 +1,14 @@
-﻿using ECommerceMVC.Domain.Entities;
+﻿using ECommerceMVC.Application.Abstraction;
+using ECommerceMVC.Domain.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
+using System.Data;
 
 namespace ECommerceMVC.Persistence.Context;
 
-public class ApplicationDbContext : IdentityDbContext<IdentityUser>
+public class ApplicationDbContext : IdentityDbContext<IdentityUser>, IUnitOfWork
 {
     public DbSet<ProductEntity> Products { get; set; }
 
@@ -160,6 +163,11 @@ public class ApplicationDbContext : IdentityDbContext<IdentityUser>
            .HasOne(p => p.User)
            .WithMany()
            .HasForeignKey(p => p.UserId);
+    }
+
+    public async Task<IDbTransaction> BeginTransactionAsync()
+    {
+        return (await Database.BeginTransactionAsync()).GetDbTransaction();
     }
 }
 

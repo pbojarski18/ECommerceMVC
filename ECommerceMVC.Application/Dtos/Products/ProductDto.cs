@@ -9,6 +9,8 @@ public class ProductDto
 
     public int? Weight { get; set; }
 
+    public int ProductQuantity { get; set; }
+
     public string Name { get; set; }
 
     public string Description { get; set; }

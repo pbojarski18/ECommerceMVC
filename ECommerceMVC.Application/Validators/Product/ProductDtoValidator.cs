@@ -8,7 +8,7 @@ public class ProductDtoValidator : AbstractValidator<ProductDto>
     public ProductDtoValidator()
     {
         RuleFor(p => p.Name)
-            .Length(5, 50).WithMessage("Name should be between 1 n 20 characters")
+            .Length(5, 50).WithMessage("Name should be between 5 n 50 characters")
             .NotEmpty().WithMessage("Name can't be empty");
         RuleFor(p => p.Price)
             .GreaterThan(0).WithMessage("Price has to be greather than 0")

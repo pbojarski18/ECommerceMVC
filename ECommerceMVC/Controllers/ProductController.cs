@@ -8,7 +8,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace ECommerceMVC.Controllers;
 
-public class ProductController(IProductService _productService, ProductDtoValidator _productDtoValidator, IFileSaver _fileSaver) : Controller
+public class ProductController(IProductService _productService,
+                               ProductDtoValidator _productDtoValidator,
+                               IFileSaver _fileSaver) : Controller
 {
     private readonly IProductService _productService = _productService;
     private readonly ProductDtoValidator _productDtoValidator = _productDtoValidator;

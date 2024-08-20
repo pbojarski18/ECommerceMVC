@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using ECommerceMVC.Application.Extensions;
 using ECommerceMVC.Infrastructure.FileService;
 using Microsoft.AspNetCore.Identity;
+using ECommerceMVC.Application.Abstraction;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -29,6 +30,7 @@ builder.Services.AddScoped<IFileSaver, FileSaver>();
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddScoped<IProductOrderRepository, ProductOrderRepository>();
 builder.Services.AddScoped<IBasketRepository, BasketRepository>();
+builder.Services.AddScoped<IUnitOfWork, ApplicationDbContext>();
 builder.Services.AddApplicationDi();
 builder.Services.AddRazorPages();
 var app = builder.Build();

@@ -16,7 +16,8 @@ public class ProductProfile : Profile
             .ForMember(dest => dest.Brand, opt => opt.MapFrom(src => src.ProductCategory.Brand))
             .ForMember(dest => dest.ImagePath, opt => opt.MapFrom(src => src.ImagePath))
             .ForMember(dest => dest.ProductType, opt => opt.MapFrom(src => src.ProductCategory.ProductType))
-            .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Price));
+            .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Price))
+            .ForMember(dest => dest.ProductQuantity, opt => opt.MapFrom(src => src.Stock.ProductQuantity));
 
         CreateMap<ProductDto, ProductEntity>()
             .ForMember(dest => dest.Id, opt => opt.Ignore())
