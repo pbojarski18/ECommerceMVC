@@ -24,6 +24,10 @@ public class ApplicationDbContext : IdentityDbContext<IdentityUser>, IUnitOfWork
 
     public DbSet<BasketEntity> Baskets { get; set; }
 
+    public DbSet<ProductDetailsEntity> ProductDetails { get; set; }
+
+    public DbSet<ProductSubcategoryEntity> ProductSubcategories { get; set; }
+
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
     {
 
@@ -49,12 +53,12 @@ public class ApplicationDbContext : IdentityDbContext<IdentityUser>, IUnitOfWork
             .IsRequired()
             .HasMaxLength(1000);
         modelBuilder.Entity<ProductEntity>()
-            .HasOne(p => p.ProductCategory)
+            .HasOne(p => p.ProductSubcategory)
             .WithMany(p => p.Products)
-            .HasForeignKey(p => p.ProductCategoryId);
+            .HasForeignKey(p => p.ProductSubcategoryId);
         modelBuilder.Entity<ProductEntity>()
-            .Property(p => p.Weight)
-            .IsRequired(false);
+            .Property(p => p.Brand)
+            .IsRequired();
 
 
         modelBuilder.Entity<StockEntity>()
@@ -115,14 +119,9 @@ public class ApplicationDbContext : IdentityDbContext<IdentityUser>, IUnitOfWork
         modelBuilder.Entity<ProductCategoryEntity>()
             .HasKey(p => p.Id);
         modelBuilder.Entity<ProductCategoryEntity>()
-            .Property(p => p.Brand)
-            .IsRequired();
-        modelBuilder.Entity<ProductCategoryEntity>()
-            .Property(p => p.Sex)
-            .IsRequired();
-        modelBuilder.Entity<ProductCategoryEntity>()
-            .Property(p => p.ProductType)
-            .IsRequired().HasConversion<string>();
+            .Property(p => p.Name)
+            .IsRequired()
+            .HasMaxLength(20);
 
         modelBuilder.Entity<StockHistoryEntity>()
             .HasKey(p => p.Id);
@@ -163,6 +162,39 @@ public class ApplicationDbContext : IdentityDbContext<IdentityUser>, IUnitOfWork
            .HasOne(p => p.User)
            .WithMany()
            .HasForeignKey(p => p.UserId);
+
+        modelBuilder.Entity<ProductDetailsEntity>()
+            .HasKey(p => p.Id);
+        modelBuilder.Entity<ProductDetailsEntity>()
+            .Property(p => p.Key)
+            .IsRequired()
+            .HasMaxLength(30);
+        modelBuilder.Entity<ProductDetailsEntity>()
+            .Property(p => p.Value)
+            .IsRequired()
+            .HasMaxLength(50);
+        modelBuilder.Entity<ProductDetailsEntity>()
+            .Property(p => p.IsMain)
+            .IsRequired();
+        modelBuilder.Entity<ProductDetailsEntity>()
+            .Property(p => p.Key)
+            .IsRequired()
+            .HasMaxLength(30);
+        modelBuilder.Entity<ProductDetailsEntity>()
+            .HasOne(p => p.Product)
+            .WithMany(p => p.ProductDetails)
+            .HasForeignKey(p => p.ProductId);
+
+        modelBuilder.Entity<ProductSubcategoryEntity>()
+            .HasKey(p => p.Id);
+        modelBuilder.Entity<ProductSubcategoryEntity>()
+            .Property(p => p.Name)
+            .IsRequired()
+            .HasMaxLength(30);
+        modelBuilder.Entity<ProductSubcategoryEntity>()
+            .HasOne(p => p.ProductCategory)
+            .WithMany(p => p.ProductSubcategories)
+            .HasForeignKey(p => p.ProductCategoryId);
     }
 
     public async Task<IDbTransaction> BeginTransactionAsync()

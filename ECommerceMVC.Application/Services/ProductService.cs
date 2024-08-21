@@ -23,9 +23,9 @@ public class ProductService(IProductRepository _productRepository,
     private readonly IUnitOfWork _unitOfWork = _unitOfWork;
 
 
-    public async Task<IEnumerable<ProductDto>> GetAllByFiltersAsync(ProductType productType, CancellationToken ct)
+    public async Task<IEnumerable<ProductDto>> GetAllByFiltersAsync(CancellationToken ct)
     {
-        var productEntities = await _productRepository.GetAllByFiltersAsync(productType, ct);
+        var productEntities = await _productRepository.GetAllByFiltersAsync(ct);
         var productDtos = _mapper.Map<IEnumerable<ProductDto>>(productEntities);
 
         return productDtos;
@@ -40,24 +40,13 @@ public class ProductService(IProductRepository _productRepository,
         return productDtos;
     }
 
-    public async Task<int> AddAsync(ProductDto productDto, CancellationToken ct)
+    public async Task<int> AddAsync(AddProductDto addProductDto, CancellationToken ct)
     {
         using var transaction = await _unitOfWork.BeginTransactionAsync();
         try
         {
-            var productEntity = _mapper.Map<ProductEntity>(productDto);
-            var productCategory = await _productCategoryRepository.GetByPropertiesAsync(productDto.Brand, productDto.Sex, productDto.ProductType, ct);
-
-            if (productCategory.Id != 0)
-            {
-                productEntity.ProductCategoryId = productCategory.Id;
-                productEntity.ProductCategory = null;
-            }
-            else
-            {
-                productEntity.ProductCategory = new ProductCategoryEntity { Brand = productDto.Brand, Sex = productDto.Sex, ProductType = productDto.ProductType };
-            }
-
+            var productEntity = _mapper.Map<ProductEntity>(addProductDto);
+                      
             await _productRepository.AddAsync(productEntity, ct);
             var stockEntity = new StockEntity { ProductQuantity = 0, CreateTimeUtc = DateTime.UtcNow, ProductId = productEntity.Id };
             await _stockRepository.AddAsync(stockEntity, ct);
@@ -77,22 +66,10 @@ public class ProductService(IProductRepository _productRepository,
         return await _productRepository.RemoveAsync(productId, ct);
     }
 
-    public async Task<bool> EditAsync(ProductDto productDto, CancellationToken ct)
+    public async Task<bool> EditAsync(EditProductDto editProductDto, CancellationToken ct)
     {
 
-        var editedProduct = _mapper.Map<ProductEntity>(productDto);
-        editedProduct.Id = productDto.Id;
-        var productCategory = await _productCategoryRepository.GetByPropertiesAsync(productDto.Brand, productDto.Sex, productDto.ProductType, ct);
-
-        if (productCategory.Id != 0)
-        {
-            editedProduct.ProductCategoryId = productCategory.Id;
-            editedProduct.ProductCategory = null;
-        }
-        else
-        {
-            editedProduct.ProductCategory = new ProductCategoryEntity { Brand = productDto.Brand, Sex = productDto.Sex, ProductType = productDto.ProductType };
-        }
+        var editedProduct = _mapper.Map<ProductEntity>(editProductDto);           
 
         return await _productRepository.EditAsync(editedProduct, ct);
     }

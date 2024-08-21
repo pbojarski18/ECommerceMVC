@@ -6,7 +6,7 @@ namespace ECommerceMVC.Domain.Repositories;
 
 public interface IProductRepository
 {
-    Task<IEnumerable<ProductEntity>> GetAllByFiltersAsync(ProductType productType, CancellationToken ct);
+    Task<IEnumerable<ProductEntity>> GetAllByFiltersAsync(CancellationToken ct);
 
     Task<int> AddAsync(ProductEntity product, CancellationToken ct);
 

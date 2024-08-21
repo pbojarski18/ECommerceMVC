@@ -10,11 +10,9 @@ public class ProductRepository(IBaseRepository _baseRepository) : IProductReposi
 {
     private readonly IBaseRepository _baseRepository = _baseRepository;
 
-    public async Task<IEnumerable<ProductEntity>> GetAllByFiltersAsync(ProductType productType, CancellationToken ct)
+    public async Task<IEnumerable<ProductEntity>> GetAllByFiltersAsync(CancellationToken ct)
     {
         var products = await _baseRepository.GetAll<ProductEntity>()
-                                            .Include(x => x.ProductCategory)
-                                            .Where(p => p.ProductCategory.ProductType == productType)
                                             .ToListAsync(ct);
 
         return products;
@@ -23,21 +21,7 @@ public class ProductRepository(IBaseRepository _baseRepository) : IProductReposi
 
     public async Task<IEnumerable<ProductEntity>> GetPagedByUserFiltersAsync(GetPagedByFiltersTransferDto filters, CancellationToken ct)
     {
-        var query = _baseRepository.GetAll<ProductEntity>()
-            .Include(p => p.ProductCategory)
-            .Include(p => p.Stock)
-            .Where(p => p.ProductCategory.ProductType == filters.ProductType);
-
-
-        if (filters.MinWeight > 0)
-        {
-            query = query.Where(p => p.Weight >= filters.MinWeight);
-        }
-
-        if (filters.MaxWeight > 0)
-        {
-            query = query.Where(p => p.Weight <= filters.MaxWeight);
-        }
+        var query = _baseRepository.GetAll<ProductEntity>();
 
         if (filters.MinPrice > 0)
         {
@@ -58,7 +42,8 @@ public class ProductRepository(IBaseRepository _baseRepository) : IProductReposi
             .Skip(filters.CurrentPage * filters.PageSize - filters.PageSize)
             .Take(filters.PageSize);
 
-        return await query.ToListAsync(ct);
+        return await query.Include(p => p.Stock)
+                          .ToListAsync(ct);
 
     }
     public async Task<int> AddAsync(ProductEntity product, CancellationToken ct)
@@ -96,8 +81,7 @@ public class ProductRepository(IBaseRepository _baseRepository) : IProductReposi
     public async Task<ProductEntity> GetByIdAsync(int productId, CancellationToken ct)
     {
         var product = await _baseRepository.GetAll<ProductEntity>()
-            .Include(p => p.ProductCategory)
-            .FirstOrDefaultAsync(p => p.Id == productId, ct);
+                                           .FirstOrDefaultAsync(p => p.Id == productId, ct);
 
         if (product == null)
         {

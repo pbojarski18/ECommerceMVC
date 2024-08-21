@@ -5,8 +5,6 @@ namespace ECommerceMVC.Application.Dtos.Products;
 
 public class GetPagedByFiltersTransferDto
 {
-    public ProductType ProductType { get; set; }
-
     public int MinWeight { get; set; }
 
     public int MaxWeight { get; set; }
@@ -20,7 +18,5 @@ public class GetPagedByFiltersTransferDto
     public int CurrentPage { get; set; }
 
     public int PageSize { get; set; }
-
-
 
 }

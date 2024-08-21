@@ -3,9 +3,9 @@ using FluentValidation;
 
 namespace ECommerceMVC.Application.Validators.Product;
 
-public class ProductDtoValidator : AbstractValidator<ProductDto>
+public class AddProductDtoValidator : AbstractValidator<AddProductDto>
 {
-    public ProductDtoValidator()
+    public AddProductDtoValidator()
     {
         RuleFor(p => p.Name)
             .Length(5, 50).WithMessage("Name should be between 5 n 50 characters")

@@ -6,13 +6,13 @@ namespace ECommerceMVC.Application.Interfaces;
 
 public interface IProductService
 {
-    Task<IEnumerable<ProductDto>> GetAllByFiltersAsync(ProductType productType, CancellationToken ct);
+    Task<IEnumerable<ProductDto>> GetAllByFiltersAsync(CancellationToken ct);
 
-    Task<int> AddAsync(ProductDto productDto, CancellationToken ct);
+    Task<int> AddAsync(AddProductDto addProductDto, CancellationToken ct);
 
     Task<bool> RemoveAsync(int productId, CancellationToken ct);
 
-    Task<bool> EditAsync(ProductDto productDto, CancellationToken ct);
+    Task<bool> EditAsync(EditProductDto editProductDto, CancellationToken ct);
 
     Task<ProductDto> GetByIdAsync(int productId, CancellationToken ct);
 

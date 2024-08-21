@@ -4,29 +4,25 @@ using ECommerceMVC.Application.Validators.Product;
 using ECommerceMVC.Domain.Entities;
 using ECommerceMVC.Domain.Enums;
 using ECommerceMVC.Infrastructure.FileService;
+using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ECommerceMVC.Controllers;
 
 public class ProductController(IProductService _productService,
-                               ProductDtoValidator _productDtoValidator,
+                               AddProductDtoValidator _productDtoValidator,
                                IFileSaver _fileSaver) : Controller
 {
     private readonly IProductService _productService = _productService;
-    private readonly ProductDtoValidator _productDtoValidator = _productDtoValidator;
+    private readonly AddProductDtoValidator _productDtoValidator = _productDtoValidator;
     private readonly IFileSaver _fileSaver = _fileSaver;
 
-    public IActionResult Index()
+    public async Task<IActionResult> Index()
     {
-        return View();
-    }
-
-    [HttpPost]
-    public async Task<IActionResult> Index(ProductType productType)
-    {
-        var model = await _productService.GetAllByFiltersAsync(productType, default);
+        var model = await _productService.GetAllByFiltersAsync(default);
         return View(model);
-    }
+       
+    }    
 
     [HttpGet]
     public async Task<IActionResult> CustomerProduct()
@@ -49,27 +45,27 @@ public class ProductController(IProductService _productService,
     }
 
     [HttpPost]
-    public async Task<IActionResult> AddProduct(ProductDto productDto, IFormFile file)
+    public async Task<IActionResult> AddProduct(AddProductDto addProductDto, IFormFile file)
     {
         // Sprawdź, czy plik został przesłany
         if (file == null || file.Length == 0)
         {
             ModelState.AddModelError("File", "No file uploaded.");
-            return View(productDto);
+            return View(addProductDto);
         }
       
             var filePath = await _fileSaver.SaveFile(file);
 
-            // Przypisz ścieżkę obrazu do produktu
-            productDto.ImagePath = filePath;
+        // Przypisz ścieżkę obrazu do produktu
+        addProductDto.ImagePath = filePath;
 
-            var result = await _productDtoValidator.ValidateAsync(productDto);
+            var result = await _productDtoValidator.ValidateAsync(addProductDto);
             if (!result.IsValid)
             {
-                return View(productDto);
+                return View(addProductDto);
             }
             // Dodaj produkt do bazy danych
-            await _productService.AddAsync(productDto, default);
+            await _productService.AddAsync(addProductDto, default);
         
 
         return RedirectToAction(nameof(Index));
@@ -91,16 +87,16 @@ public class ProductController(IProductService _productService,
     }
 
     [HttpPost]
-    public async Task<IActionResult> EditProduct(ProductDto productDto)
+    public async Task<IActionResult> EditProduct(EditProductDto editProductDto)
     {
-        var result = await _productDtoValidator.ValidateAsync(productDto);
+        var result = await _productDtoValidator.ValidateAsync(editProductDto);
         if (result.IsValid)
         {
-            var model = await _productService.EditAsync(productDto, default);
+            var model = await _productService.EditAsync(editProductDto, default);
             return RedirectToAction(nameof(Index));
         }
 
-        return View(productDto);
+        return View(editProductDto);
     }
 
 }

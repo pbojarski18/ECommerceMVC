@@ -5,9 +5,9 @@ namespace ECommerceMVC.Application.Dtos.Products;
 public class ProductDto
 {
     public int Id { get; set; }
-    public double Price { get; set; }
 
-    public int? Weight { get; set; }
+    public int ProductSubcategoryId { get; set; }
+    public double Price { get; set; }
 
     public int ProductQuantity { get; set; }
 
@@ -19,7 +19,4 @@ public class ProductDto
 
     public string Brand { get; set; }
 
-    public string Sex { get; set; }
-
-    public ProductType ProductType { get; set; }
 }
