@@ -1,0 +1,37 @@
+﻿@model IEnumerable<ECommerceMVC.Application.Dtos.Categories.ProductCategoryDto>
+
+<h2>Product Categories</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Category ID</th>
+            <th>Category Name</th>
+            <th>Subcategories</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var category in Model)
+        {
+            <tr>
+                <td>@category.Id</td>
+                <td>@category.Name</td>
+                <td>
+                    @if (category.Subcategories != null && category.Subcategories.Any())
+                    {
+                        <ul>
+                            @foreach (var subcategory in category.Subcategories)
+                            {
+                                <li>@subcategory.Name</li> <!-- Assuming ProductSubcategoryDto has a Name property -->
+                            }
+                        </ul>
+                    }
+                    else
+                    {
+                        <span>No subcategories available</span>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

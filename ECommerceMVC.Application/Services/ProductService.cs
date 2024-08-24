@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using ECommerceMVC.Application.Abstraction;
+using ECommerceMVC.Application.Dtos.Categories;
 using ECommerceMVC.Application.Dtos.Products;
 using ECommerceMVC.Application.Interfaces;
 using ECommerceMVC.Domain.Entities;
@@ -46,7 +47,7 @@ public class ProductService(IProductRepository _productRepository,
         try
         {
             var productEntity = _mapper.Map<ProductEntity>(addProductDto);
-                      
+
             await _productRepository.AddAsync(productEntity, ct);
             var stockEntity = new StockEntity { ProductQuantity = 0, CreateTimeUtc = DateTime.UtcNow, ProductId = productEntity.Id };
             await _stockRepository.AddAsync(stockEntity, ct);
@@ -69,7 +70,7 @@ public class ProductService(IProductRepository _productRepository,
     public async Task<bool> EditAsync(EditProductDto editProductDto, CancellationToken ct)
     {
 
-        var editedProduct = _mapper.Map<ProductEntity>(editProductDto);           
+        var editedProduct = _mapper.Map<ProductEntity>(editProductDto);
 
         return await _productRepository.EditAsync(editedProduct, ct);
     }
@@ -82,6 +83,15 @@ public class ProductService(IProductRepository _productRepository,
         return productDto;
 
     }
+
+    public async Task<IEnumerable<ProductCategoryDto>> GetAllAsync(CancellationToken ct)
+    {
+        var productCategoryEntities = await _productCategoryRepository.GetAllAsync(ct);
+        var productCategoriesDto = _mapper.Map<IEnumerable<ProductCategoryDto>>(productCategoryEntities);
+
+        return productCategoriesDto;
+    }
+
 
 
 }

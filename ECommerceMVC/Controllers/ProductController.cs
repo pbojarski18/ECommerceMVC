@@ -4,6 +4,7 @@ using ECommerceMVC.Application.Validators.Product;
 using ECommerceMVC.Domain.Entities;
 using ECommerceMVC.Domain.Enums;
 using ECommerceMVC.Infrastructure.FileService;
+using ECommerceMVC.ViewModels;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 
@@ -21,13 +22,16 @@ public class ProductController(IProductService _productService,
     {
         var model = await _productService.GetAllByFiltersAsync(default);
         return View(model);
-       
-    }    
+
+    }
+
+    
 
     [HttpGet]
     public async Task<IActionResult> CustomerProduct()
     {
-        return View();
+        var categories = await _productService.GetAllAsync(default);        
+        return View(categories);
     }
 
     [HttpPost]
@@ -39,9 +43,11 @@ public class ProductController(IProductService _productService,
 
 
     [HttpGet]
-    public IActionResult AddProduct()
+    public async Task<IActionResult> AddProduct()
     {
-        return View();
+        var category = await _productService.GetAllAsync(default);
+        var model = new AddProductViewModel() { Categories = category};
+        return View(model);
     }
 
     [HttpPost]
@@ -53,20 +59,20 @@ public class ProductController(IProductService _productService,
             ModelState.AddModelError("File", "No file uploaded.");
             return View(addProductDto);
         }
-      
-            var filePath = await _fileSaver.SaveFile(file);
+
+        var filePath = await _fileSaver.SaveFile(file);
 
         // Przypisz ścieżkę obrazu do produktu
         addProductDto.ImagePath = filePath;
 
-            var result = await _productDtoValidator.ValidateAsync(addProductDto);
-            if (!result.IsValid)
-            {
-                return View(addProductDto);
-            }
-            // Dodaj produkt do bazy danych
-            await _productService.AddAsync(addProductDto, default);
-        
+        var result = await _productDtoValidator.ValidateAsync(addProductDto);
+        if (!result.IsValid)
+        {
+            return View(addProductDto);
+        }
+        // Dodaj produkt do bazy danych
+        await _productService.AddAsync(addProductDto, default);
+
 
         return RedirectToAction(nameof(Index));
     }

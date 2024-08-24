@@ -1,14 +1,128 @@
 ﻿@using ECommerceMVC.Application.Dtos.Products
-@model IEnumerable<ECommerceMVC.Application.Dtos.Products.ProductDto>
-@{
-    var filters = new GetPagedByFiltersTransferDto()
-            {
-                CurrentPage = 1,
-                PageSize = 10
-            };
-}
+@model IEnumerable<ECommerceMVC.Application.Dtos.Categories.ProductCategoryDto>
 
+<div class="tabs-container">
+    <div class="tab-buttons">
+        @foreach (var category in Model)
+        {
+            <button class="tab-button" data-target="#category-@category.Id" onclick="showTab('@category.Id')">
+                @category.Name
+            </button>
+        }
+    </div>
 
+    <div class="tab-contents">
+        @foreach (var category in Model)
+        {
+            <div id="category-@category.Id" class="tab-content">               
+                <div class="subcategory-buttons">
+                    @foreach (var subCategory in category.Subcategories)
+                    {
+                        <form method="post" asp-action="CustomerProduct" asp-controller="Product">
+                            <input type="hidden" name="Id" value="@subCategory.Id" />
+                        <button class="subcategory-button" type="submit">
+                            @subCategory.Name
+                        </button>
+
+                        </form>
+                        
+                    }
+                </div>
+            </div>
+        }
+    </div>
+</div>
+<style>
+    .tabs-container {
+        display: flex;
+        flex-direction: column;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .tab-buttons {
+        display: flex;
+        background-color: #f4f4f4;
+    }
+
+    .tab-button {
+        flex: 1;
+        padding: 15px;
+        border: none;
+        background: transparent;
+        cursor: pointer;
+        font-weight: bold;
+        transition: background-color 0.3s;
+    }
+
+        .tab-button:hover {
+            background-color: #e0e0e0;
+        }
+
+    .tab-content {
+        display: none;
+        padding: 20px;
+        border-top: 1px solid #ddd;
+    }
+
+        .tab-content.active {
+            display: block;
+        }
+
+    h3 {
+        margin-bottom: 10px;
+        font-size: 1.5em;
+        color: #333;
+    }
+
+    .subcategory-buttons {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 10px;
+    }
+
+    .subcategory-button {
+        padding: 10px 15px;
+        border: none;
+        border-radius: 5px;
+        background-color: #007bff;
+        color: white;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+        .subcategory-button:hover {
+            background-color: #0056b3;
+        }
+</style>
+
+<script>
+    function showTab(categoryId) {
+        // Hide all tab contents
+        const allContents = document.querySelectorAll('.tab-content');
+        allContents.forEach(content => {
+            content.classList.remove('active');
+        });
+
+        // Show the selected tab content
+        const activeContent = document.getElementById('category-' + categoryId);
+        if (activeContent) {
+            activeContent.classList.add('active');
+        }
+    }
+
+    // Initialize the first tab as active
+    document.addEventListener('DOMContentLoaded', () => {
+        const firstButton = document.querySelector('.tab-button');
+        if (firstButton) {
+            firstButton.click();
+        }
+    });
+</script>
+@*
 <div class="container mb-5">
     <h2 class="d-flex justify-cotent-start">Products</h2>
 
@@ -217,4 +331,4 @@
         }
     }
 
-</script>
+</script> *@

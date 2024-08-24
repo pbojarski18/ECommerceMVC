@@ -1,4 +1,5 @@
-﻿using ECommerceMVC.Application.Dtos.Products;
+﻿using ECommerceMVC.Application.Dtos.Categories;
+using ECommerceMVC.Application.Dtos.Products;
 using ECommerceMVC.Application.Services;
 using ECommerceMVC.Domain.Enums;
 
@@ -17,4 +18,6 @@ public interface IProductService
     Task<ProductDto> GetByIdAsync(int productId, CancellationToken ct);
 
     Task<IEnumerable<ProductDto>> GetPagedByUserFiltersAsync(GetPagedByFiltersTransferDto filters, CancellationToken ct);
+
+    Task<IEnumerable<ProductCategoryDto>> GetAllAsync(CancellationToken ct);
 }

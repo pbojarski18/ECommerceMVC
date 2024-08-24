@@ -1,5 +1,6 @@
 ﻿using ECommerceMVC.Application.Abstraction;
 using ECommerceMVC.Domain.Entities;
+using ECommerceMVC.Persistence.Seed;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -195,6 +196,8 @@ public class ApplicationDbContext : IdentityDbContext<IdentityUser>, IUnitOfWork
             .HasOne(p => p.ProductCategory)
             .WithMany(p => p.ProductSubcategories)
             .HasForeignKey(p => p.ProductCategoryId);
+
+        modelBuilder.DataSeed();
     }
 
     public async Task<IDbTransaction> BeginTransactionAsync()

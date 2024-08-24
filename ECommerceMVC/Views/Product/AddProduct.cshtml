@@ -1,48 +1,82 @@
-﻿@using ECommerceMVC.Domain.Enums
-@model ECommerceMVC.Application.Dtos.Products.AddProductDto
+﻿@using ECommerceMVC.ViewModels
+@model AddProductViewModel
 
 <h2>Add New Product</h2>
 
-<div class="d-flex flex-column col-6 justify-content-start align-items-center">    
+<div class="d-flex flex-column col-6 justify-content-start align-items-center">
     <form method="post" asp-action="AddProduct" enctype="multipart/form-data">
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                <div class="form-group col-12">
-            <label>Name:</label>
-            <input type="text" asp-for="Name" class="form-control" required />
-            <span asp-validation-for="Name" class="text-danger"></span>
+
+        <div class="form-group col-12">
+            <label>Product Category:</label>
+            <select id="categorySelect" class="form-control" required>
+                <option value="">Select a category</option>
+                @foreach (var category in Model.Categories)
+                {
+                    <option value="@category.Id">@category.Name</option>
+                }
+            </select>
         </div>
+
+        <div class="form-group col-12">
+            <label>Product Subcategory:</label>
+            <select id="subcategorySelect" class="form-control" asp-for="@Model.AddProductDto.ProductSubcategoryId" required>
+                <option value="">Select a subcategory</option>
+            </select>
+        </div>
+
+        <div class="form-group col-12">
+            <label>Name:</label>
+            <input type="text" asp-for="@Model.AddProductDto.Name" class="form-control" required />
+            <span asp-validation-for="@Model.AddProductDto.Name" class="text-danger"></span>
+        </div>
+
         <div class="form-group col-12">
             <label>Price:</label>
-            <input type="number" asp-for="Price" class="form-control" required />
-            <span asp-validation-for="Price" class="text-danger"></span>
+            <input type="number" asp-for="@Model.AddProductDto.Price" class="form-control" required />
+            <span asp-validation-for="@Model.AddProductDto.Price" class="text-danger"></span>
         </div>
+
         <div class="form-group col-12">
             <label>Description:</label>
-            <textarea asp-for="Description" class="form-control"></textarea>
-            <span asp-validation-for="Description" class="text-danger"></span>
-        </div>   
-        <div class="form-group col-12">      
+            <textarea asp-for="@Model.AddProductDto.Description" class="form-control"></textarea>
+            <span asp-validation-for="@Model.AddProductDto.Description" class="text-danger"></span>
+        </div>
+
+        <div class="form-group col-12">
             <input type="file" name="file" id="fileInput" />
         </div>
+
         <div class="form-group col-12">
             <label>Brand:</label>
-            <input type="text" asp-for="Brand" class="form-control" />
-            <span asp-validation-for="Brand" class="text-danger"></span>
+            <input type="text" asp-for="@Model.AddProductDto.Brand" class="form-control" />
+            <span asp-validation-for="@Model.AddProductDto.Brand" class="text-danger"></span>
         </div>
-                <button type="submit" class="btn btn-primary">Add Product</button>
+
+        <button type="submit" class="btn btn-primary">Add Product</button>
     </form>
 </div>
 
 @section Scripts {
     <script>
-        document.getElementById('productTypeSelect').addEventListener('change', function () {
-            var weightField = document.getElementById('weightField');
-            if (this.value == "1") { // Raquets
-                weightField.style.display = 'block';
-            } else {
-                weightField.style.display = 'none';
+        document.getElementById('categorySelect').addEventListener('change', function () {
+            var categoryId = this.value;
+            var subcategorySelect = document.getElementById('subcategorySelect');
+
+            // Clear previous subcategories
+            subcategorySelect.innerHTML = '<option value="">Select a subcategory</option>';
+
+            var categories = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.Categories));
+
+            if (categoryId) {
+                var selectedCategory = categories.find(c => c.Id == categoryId);
+                selectedCategory.Subcategories.forEach(function (subcategory) {
+                    var option = document.createElement('option');
+                    option.value = subcategory.Id;
+                    option.textContent = subcategory.Name;
+                    subcategorySelect.appendChild(option);
+                });
             }
         });
-        
     </script>
 }
