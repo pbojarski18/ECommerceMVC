@@ -31,6 +31,7 @@ builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddScoped<IProductOrderRepository, ProductOrderRepository>();
 builder.Services.AddScoped<IBasketRepository, BasketRepository>();
 builder.Services.AddScoped<IUnitOfWork, ApplicationDbContext>();
+builder.Services.AddScoped<IProductDetailsRepository, ProductDetailsRepository>();
 builder.Services.AddApplicationDi();
 builder.Services.AddRazorPages();
 var app = builder.Build();

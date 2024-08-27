@@ -53,12 +53,96 @@
             <span asp-validation-for="@Model.AddProductDto.Brand" class="text-danger"></span>
         </div>
 
+        <div id="productDetailsContainer">
+            <h4>Product Details</h4>
+            @for (int i = 0; i < Model.AddProductDto.ProductDetails.Count(); i++)
+            {
+                <div class="product-detail">
+                    <div class="form-group">
+                        <label>Key:</label>
+                        <input type="text" name="AddProductDto.ProductDetails[@i].Key" value="@Model.AddProductDto.ProductDetails[@i].Key" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label>Value:</label>
+                        <input type="text" name="AddProductDto.ProductDetails[@i].Value" value="@Model.AddProductDto.ProductDetails[@i].Value" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label>Is Main:</label>
+                        <input type="checkbox" name="AddProductDto.ProductDetails[@i].IsMain" value="true" @(Model.AddProductDto.ProductDetails[@i].IsMain ? "checked" : "") />
+                        <input type="hidden" name="AddProductDto.ProductDetails[@i].IsMain" value="false" />
+                    </div>
+                </div>
+            }
+        </div>
+
+        <button type="button" class="btn btn-secondary" id="addDetailButton">Add Product Detail</button>
         <button type="submit" class="btn btn-primary">Add Product</button>
     </form>
 </div>
 
 @section Scripts {
     <script>
+        let detailIndex = @Model.AddProductDto.ProductDetails.Count() - 1;
+
+        document.getElementById('addDetailButton').addEventListener('click', function () {
+            detailIndex++;
+
+            var detailContainer = document.createElement('div');
+            detailContainer.classList.add('product-detail');
+
+            var keyInput = document.createElement('input');
+            keyInput.type = 'text';
+            keyInput.name = `AddProductDto.ProductDetails[${detailIndex}].Key`;
+            keyInput.classList.add('form-control');
+
+            var valueInput = document.createElement('input');
+            valueInput.type = 'text';
+            valueInput.name = `AddProductDto.ProductDetails[${detailIndex}].Value`;
+            valueInput.classList.add('form-control');
+
+            var isMainCheckbox = document.createElement('input');
+            isMainCheckbox.type = 'checkbox';
+            isMainCheckbox.name = `AddProductDto.ProductDetails[${detailIndex}].IsMain`;
+            isMainCheckbox.value = "true";
+
+            // Add hidden field to send false when checkbox is unchecked
+            var hiddenIsMain = document.createElement('input');
+            hiddenIsMain.type = 'hidden';
+            hiddenIsMain.name = `AddProductDto.ProductDetails[${detailIndex}].IsMain`;
+            hiddenIsMain.value = "false";
+
+            var keyLabel = document.createElement('label');
+            keyLabel.textContent = 'Key:';
+
+            var valueLabel = document.createElement('label');
+            valueLabel.textContent = 'Value:';
+
+            var isMainLabel = document.createElement('label');
+            isMainLabel.textContent = 'Is Main:';
+
+            var keyDiv = document.createElement('div');
+            keyDiv.classList.add('form-group');
+            keyDiv.appendChild(keyLabel);
+            keyDiv.appendChild(keyInput);
+
+            var valueDiv = document.createElement('div');
+            valueDiv.classList.add('form-group');
+            valueDiv.appendChild(valueLabel);
+            valueDiv.appendChild(valueInput);
+
+            var isMainDiv = document.createElement('div');
+            isMainDiv.classList.add('form-group');
+            isMainDiv.appendChild(isMainLabel);
+            isMainDiv.appendChild(isMainCheckbox);
+            isMainDiv.appendChild(hiddenIsMain);
+
+            detailContainer.appendChild(keyDiv);
+            detailContainer.appendChild(valueDiv);
+            detailContainer.appendChild(isMainDiv);
+
+            document.getElementById('productDetailsContainer').appendChild(detailContainer);
+        });
+
         document.getElementById('categorySelect').addEventListener('change', function () {
             var categoryId = this.value;
             var subcategorySelect = document.getElementById('subcategorySelect');

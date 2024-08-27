@@ -11,12 +11,12 @@ public class GetPagedByFiltersTransferDto
 
     public double MinPrice { get; set; }
 
-    public double MaxPrice { get; set; }
-
-    public string Name { get; set; }
+    public double MaxPrice { get; set; }  
 
     public int CurrentPage { get; set; }
 
     public int PageSize { get; set; }
+
+    public int ProductSubcategoryId {  get; set; }
 
 }

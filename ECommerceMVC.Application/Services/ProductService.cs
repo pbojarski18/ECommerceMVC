@@ -14,7 +14,8 @@ public class ProductService(IProductRepository _productRepository,
                             IProductCategoryRepository _productCategoryRepository,
                             IStockRepository _stockRepository,
                             IStockHistoryRepository _stockHistoryRepository,
-                            IUnitOfWork _unitOfWork) : IProductService
+                            IUnitOfWork _unitOfWork,
+                            IProductDetailsRepository _productDetailsRepository) : IProductService
 {
     private readonly IProductRepository _productRepository = _productRepository;
     private readonly IMapper _mapper = _mapper;
@@ -22,6 +23,7 @@ public class ProductService(IProductRepository _productRepository,
     private readonly IStockRepository _stockRepository = _stockRepository;
     private readonly IStockHistoryRepository stockHistoryRepository = _stockHistoryRepository;
     private readonly IUnitOfWork _unitOfWork = _unitOfWork;
+    private readonly IProductDetailsRepository _productDetailsRepository = _productDetailsRepository;
 
 
     public async Task<IEnumerable<ProductDto>> GetAllByFiltersAsync(CancellationToken ct)
@@ -47,12 +49,21 @@ public class ProductService(IProductRepository _productRepository,
         try
         {
             var productEntity = _mapper.Map<ProductEntity>(addProductDto);
-
             await _productRepository.AddAsync(productEntity, ct);
+
+            var productDetailsEntity = _mapper.Map<IEnumerable<ProductDetailsEntity>>(addProductDto.ProductDetails);
+            foreach (var productDetails in productDetailsEntity)
+            {
+                productDetails.ProductId = productEntity.Id;
+            }
+            await _productDetailsRepository.AddRangeAsync(productDetailsEntity, ct);
+
             var stockEntity = new StockEntity { ProductQuantity = 0, CreateTimeUtc = DateTime.UtcNow, ProductId = productEntity.Id };
             await _stockRepository.AddAsync(stockEntity, ct);
+
             var stockHistory = new StockHistoryEntity { ProductQuantity = 0, CreateTimeUtc = DateTime.UtcNow, ProductId = productEntity.Id, StockId = stockEntity.Id, Message = $"Stock's been created for item {productEntity.Name}" };
             await _stockHistoryRepository.AddAsync(stockHistory, ct);
+
             return productEntity.Id;
         }
         catch (Exception ex)

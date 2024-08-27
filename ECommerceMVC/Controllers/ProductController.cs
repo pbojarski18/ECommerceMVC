@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace ECommerceMVC.Controllers;
 
+[Route("Product")]
 public class ProductController(IProductService _productService,
                                AddProductDtoValidator _productDtoValidator,
                                IFileSaver _fileSaver) : Controller
@@ -25,32 +26,45 @@ public class ProductController(IProductService _productService,
 
     }
 
-    
 
-    [HttpGet]
+
+    [HttpGet("customer-product")]
     public async Task<IActionResult> CustomerProduct()
     {
-        var categories = await _productService.GetAllAsync(default);        
-        return View(categories);
+        var categories = await _productService.GetAllAsync(default);
+        var model = new CustomerProductViewModel() { ProductCategories = categories };
+        return View(model);
     }
 
-    [HttpPost]
+    [HttpGet("by-id")]
+    public async Task<IActionResult> CustomerProduct(int Id)
+    {
+        var model = new CustomerProductViewModel();
+        model.GetPagedByFiltersTransferDto = new GetPagedByFiltersTransferDto() { ProductSubcategoryId = Id, CurrentPage = 1, PageSize = 20 };
+        model.ProductCategories = await _productService.GetAllAsync(default);
+        model.Products = await _productService.GetPagedByUserFiltersAsync(model.GetPagedByFiltersTransferDto, default);
+        return View(model);
+    }
+
+    [HttpGet("by-filters")]
     public async Task<IActionResult> CustomerProduct(GetPagedByFiltersTransferDto filters)
     {
-        var model = await _productService.GetPagedByUserFiltersAsync(filters, default);
+        var model = new CustomerProductViewModel();
+        model.GetPagedByFiltersTransferDto = filters;
+        model.Products = await _productService.GetPagedByUserFiltersAsync(filters, default);
         return View(model);
     }
 
 
-    [HttpGet]
+    [HttpGet("AddProduct")]
     public async Task<IActionResult> AddProduct()
     {
         var category = await _productService.GetAllAsync(default);
-        var model = new AddProductViewModel() { Categories = category};
+        var model = new AddProductViewModel() { Categories = category };
         return View(model);
     }
 
-    [HttpPost]
+    [HttpPost("AddProduct")]
     public async Task<IActionResult> AddProduct(AddProductDto addProductDto, IFormFile file)
     {
         // Sprawdź, czy plik został przesłany
@@ -73,11 +87,10 @@ public class ProductController(IProductService _productService,
         // Dodaj produkt do bazy danych
         await _productService.AddAsync(addProductDto, default);
 
-
         return RedirectToAction(nameof(Index));
     }
 
-    [HttpPost]
+    [HttpPost("RemoveProduct")]
     public async Task<IActionResult> RemoveProduct(int productId)
     {
         var model = await _productService.RemoveAsync(productId, default);
@@ -85,14 +98,15 @@ public class ProductController(IProductService _productService,
         return RedirectToAction(nameof(Index));
     }
 
-    [HttpGet]
+    [HttpGet("EditProduct")]
     public async Task<IActionResult> EditProduct(int id)
     {
-        var model = await _productService.GetByIdAsync(id, default);
+        var product = await _productService.GetByIdAsync(id, default);
+        var model = new EditProductDto(product);
         return View(model);
     }
 
-    [HttpPost]
+    [HttpPost("EditProduct")]
     public async Task<IActionResult> EditProduct(EditProductDto editProductDto)
     {
         var result = await _productDtoValidator.ValidateAsync(editProductDto);

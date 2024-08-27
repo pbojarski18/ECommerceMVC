@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using ECommerceMVC.Application.Dtos.Products;
 using ECommerceMVC.Domain.Entities;
+using Microsoft.Extensions.ObjectPool;
 
 namespace ECommerceMVC.Application.MapperProfiles.Products;
 
@@ -25,7 +26,15 @@ public class ProductProfile : Profile
             .ForMember(dest => dest.CreateTimeUtc, opt => opt.MapFrom(src => DateTime.UtcNow))
             .ForMember(dest => dest.ImagePath, opt => opt.MapFrom(src => src.ImagePath))
             .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Price))
-            .ForMember(dest => dest.ProductSubcategoryId, opt => opt.MapFrom(src => src.ProductSubcategoryId));
+            .ForMember(dest => dest.ProductSubcategoryId, opt => opt.MapFrom(src => src.ProductSubcategoryId))
+            .ForMember(dest => dest.ProductDetails, opt => opt.Ignore());
+
+        CreateMap<AddProductDetailsDto, ProductDetailsEntity>()
+            .ForMember(dest => dest.IsMain, opt => opt.MapFrom(src => src.IsMain))
+            .ForMember(dest => dest.Key, opt => opt.MapFrom(src => src.Key))
+            .ForMember(dest => dest.Value, opt => opt.MapFrom(src => src.Value))
+            .ForMember(dest => dest.CreateTimeUtc, opt => opt.MapFrom(src => DateTime.UtcNow));
+
 
         CreateMap<EditProductDto, ProductEntity>()
             .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))

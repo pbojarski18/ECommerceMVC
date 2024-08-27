@@ -1,9 +1,9 @@
 ﻿@using ECommerceMVC.Application.Dtos.Products
-@model IEnumerable<ECommerceMVC.Application.Dtos.Categories.ProductCategoryDto>
+@model CustomerProductViewModel
 
 <div class="tabs-container">
     <div class="tab-buttons">
-        @foreach (var category in Model)
+        @foreach (var category in Model.ProductCategories)
         {
             <button class="tab-button" data-target="#category-@category.Id" onclick="showTab('@category.Id')">
                 @category.Name
@@ -12,13 +12,13 @@
     </div>
 
     <div class="tab-contents">
-        @foreach (var category in Model)
+        @foreach (var category in Model.ProductCategories)
         {
             <div id="category-@category.Id" class="tab-content">               
                 <div class="subcategory-buttons">
                     @foreach (var subCategory in category.Subcategories)
                     {
-                        <form method="post" asp-action="CustomerProduct" asp-controller="Product">
+                        <form method="get" asp-action="by-id" asp-route-productSubcategoryId="@subCategory.Id" asp-controller="Product">
                             <input type="hidden" name="Id" value="@subCategory.Id" />
                         <button class="subcategory-button" type="submit">
                             @subCategory.Name
@@ -31,6 +31,57 @@
             </div>
         }
     </div>
+</div>
+@if (Model != null && Model.Products.Any())
+{
+    <div class="container mb-5">
+        <h2 class="text-center mb-4">Our Products</h2>
+        <div class="row justify-content-center">
+            @foreach (var product in Model.Products)
+            {
+                <div class="col-md-4 col-sm-6 mb-4">
+                    <div class="card shadow-sm border-light">
+                        <img class="card-img-top" src="@product.ImagePath" alt="@product.Name" style="height: 200px; object-fit: cover;" />
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title">@product.Name @product.Brand</h5>
+                            <p class="card-text text-muted">
+                                @if (product.Description.Length > 50)
+                                {
+                                    @product.Description.Substring(0, 50)
+
+                                }
+                                else
+                                {
+                                    @product.Description
+                                }
+                            </p>
+                            <div class="mt-auto">
+                                <p class="card-text text-primary">@product.Price.ToString("C")</p>
+                                <button class="btn btn-outline-primary">View Details</button>
+                                @if (product.ProductQuantity > 0)
+                                {
+                                    <button type="button" class="btn btn-danger btn-sm"
+                                            onclick="openBasketModal(@product.Id, @product.Price)">
+                                        Add to basket
+                                    </button>
+                                }
+                                else
+                                {
+                                    <button disabled type="button" class="btn btn-danger btn-sm"
+                                            onclick="openBasketModal(@product.Id, @product.Price)">
+                                        Add to basket
+                                    </button>
+                                    <span>Currently unavailable.</span>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+}
+<div class="p-5" />
 </div>
 <style>
     .tabs-container {
