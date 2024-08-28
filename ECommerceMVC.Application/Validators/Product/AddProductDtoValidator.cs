@@ -14,7 +14,7 @@ public class AddProductDtoValidator : AbstractValidator<AddProductDto>
             .GreaterThan(0).WithMessage("Price has to be greather than 0")
             .NotEmpty().WithMessage("Can't be empty");
         RuleFor(p => p.Description)
-            .Length(50, 1000).WithMessage("Description should be between 50 n 1000 characters")
+            .Length(50, 3000).WithMessage("Description should be between 50 n 3000 characters")
             .NotEmpty().WithMessage("Can't be empty");
         RuleFor(p => p.ImagePath)
             .NotEmpty().WithMessage("Can't be empty");

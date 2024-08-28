@@ -13,4 +13,12 @@ public class ProductDetailsRepository(IBaseRepository _baseRepository) : IProduc
 
         return true;
     }
+
+    public async Task<bool> EditRangeAsync(IEnumerable<ProductDetailsEntity> productDetails, CancellationToken ct)
+    {
+        _baseRepository.UpdateRange<ProductDetailsEntity>(productDetails);
+        await _baseRepository.SaveAsync(ct);
+
+        return true;
+    }
 }

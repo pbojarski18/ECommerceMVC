@@ -31,7 +31,7 @@ public class ProductController(IProductService _productService,
     [HttpGet("customer-product")]
     public async Task<IActionResult> CustomerProduct()
     {
-        var categories = await _productService.GetAllAsync(default);
+        var categories = await _productService.GetAllCategoriesAsync(default);
         var model = new CustomerProductViewModel() { ProductCategories = categories };
         return View(model);
     }
@@ -41,7 +41,7 @@ public class ProductController(IProductService _productService,
     {
         var model = new CustomerProductViewModel();
         model.GetPagedByFiltersTransferDto = new GetPagedByFiltersTransferDto() { ProductSubcategoryId = Id, CurrentPage = 1, PageSize = 20 };
-        model.ProductCategories = await _productService.GetAllAsync(default);
+        model.ProductCategories = await _productService.GetAllCategoriesAsync(default);
         model.Products = await _productService.GetPagedByUserFiltersAsync(model.GetPagedByFiltersTransferDto, default);
         return View(model);
     }
@@ -59,7 +59,7 @@ public class ProductController(IProductService _productService,
     [HttpGet("AddProduct")]
     public async Task<IActionResult> AddProduct()
     {
-        var category = await _productService.GetAllAsync(default);
+        var category = await _productService.GetAllCategoriesAsync(default);
         var model = new AddProductViewModel() { Categories = category };
         return View(model);
     }
@@ -103,20 +103,23 @@ public class ProductController(IProductService _productService,
     {
         var product = await _productService.GetByIdAsync(id, default);
         var model = new EditProductDto(product);
-        return View(model);
+        var viewModel = new EditProductViewModel();
+        viewModel.EditProductDto = model;
+        viewModel.Categories = await _productService.GetAllCategoriesAsync(default);
+        return View(viewModel);
     }
 
     [HttpPost("EditProduct")]
     public async Task<IActionResult> EditProduct(EditProductDto editProductDto)
     {
-        var result = await _productDtoValidator.ValidateAsync(editProductDto);
-        if (result.IsValid)
-        {
+        //var result = await _productDtoValidator.ValidateAsync(editProductDto);
+        //if (result.IsValid)
+        //{
             var model = await _productService.EditAsync(editProductDto, default);
             return RedirectToAction(nameof(Index));
-        }
+        //}
 
-        return View(editProductDto);
+        //return View(editProductDto);
     }
 
 }

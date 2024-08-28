@@ -1,35 +1,178 @@
-﻿@model ECommerceMVC.Application.Dtos.Products.EditProductDto
+﻿@using ECommerceMVC.ViewModels
+@model EditProductViewModel
 
 <h2>Edit Product</h2>
 <div class="d-flex flex-column col-6 justify-content-start align-items-center">
+    <form method="post" asp-action="EditProduct" enctype="multipart/form-data">
+        <input type="hidden" asp-for="@Model.EditProductDto.Id" />
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-    <form method="post" asp-action="EditProduct">
-        <input type="hidden" asp-for="Id" />
+        <div class="form-group col-12">
+            <label>Product Category:</label>
+            <select id="categorySelect" class="form-control" required>
+                <option value="">Select a category</option>
+                @foreach (var category in Model.Categories)
+                {
+                    <option value="@category.Id">@category.Name</option>
+                }
+            </select>
+        </div>
+
+        <div class="form-group col-12">
+            <label>Product Subcategory:</label>
+            <select id="subcategorySelect" class="form-control" asp-for="@Model.EditProductDto.ProductSubcategoryId" required>
+                <option value="">Select a subcategory</option>
+            </select>
+        </div>
+
         <div class="form-group col-12">
             <label>Name:</label>
-            <input type="text" asp-for="Name" class="form-control" required />
-            <span asp-validation-for="Name" class="text-danger"></span>
+            <input type="text" asp-for="@Model.EditProductDto.Name" class="form-control" required />
+            <span asp-validation-for="@Model.EditProductDto.Name" class="text-danger"></span>
         </div>
+
         <div class="form-group col-12">
             <label>Price:</label>
-            <input type="number" asp-for="Price" class="form-control" required />
-            <span asp-validation-for="Price" class="text-danger"></span>
+            <input type="number" asp-for="@Model.EditProductDto.Price" class="form-control" required />
+            <span asp-validation-for="@Model.EditProductDto.Price" class="text-danger"></span>
         </div>
+
         <div class="form-group col-12">
             <label>Description:</label>
-            <textarea asp-for="Description" class="form-control"></textarea>
-            <span asp-validation-for="Description" class="text-danger"></span>
+            <textarea asp-for="@Model.EditProductDto.Description" class="form-control"></textarea>
+            <span asp-validation-for="@Model.EditProductDto.Description" class="text-danger"></span>
         </div>
+
         <div class="form-group col-12">
-            <label>Image Path:</label>
-            <input type="text" asp-for="ImagePath" class="form-control" />
-            <span asp-validation-for="ImagePath" class="text-danger"></span>
+            <input type="file" name="file" id="fileInput" />
         </div>
+
         <div class="form-group col-12">
             <label>Brand:</label>
-            <input type="text" asp-for="Brand" class="form-control" />
-            <span asp-validation-for="Brand" class="text-danger"></span>
+            <input type="text" asp-for="@Model.EditProductDto.Brand" class="form-control" />
+            <span asp-validation-for="@Model.EditProductDto.Brand" class="text-danger"></span>
         </div>
-                <button type="submit" class="btn btn-primary">Add Product</button>
+
+        <div id="productDetailsContainer">
+            <h4>Product Details</h4>
+            @for (int i = 0; i < Model.EditProductDto.Details.Count(); i++)
+            {
+                <div class="product-detail" id="productDetail_@i">
+                    <div class="form-group">
+                        <label>Key:</label>
+                        <input type="text" name="EditProductDto.Details[@i].Key" value="@Model.EditProductDto.Details[@i].Key" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label>Value:</label>
+                        <input type="text" name="EditProductDto.Details[@i].Value" value="@Model.EditProductDto.Details[@i].Value" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label>Is Main:</label>
+                        <input type="checkbox" name="EditProductDto.Details[@i].IsMain" value="true" @(Model.EditProductDto.Details[@i].IsMain ? "checked" : "") />
+                        <input type="hidden" name="EditProductDto.Details[@i].IsMain" value="false" />
+                    </div>
+                </div>
+            }
+        </div>
+
+        <button type="button" class="btn btn-secondary" id="addDetailButton">Add Product Detail</button>
+        <button type="submit" class="btn btn-primary">Add Product</button>
     </form>
 </div>
+
+@section Scripts {
+    <script>
+        // Initialize the detail index based on the current count of product details
+        let detailIndex = @Model.EditProductDto.Details.Count() - 1;
+
+        // Add event listener for adding new product detail
+        document.getElementById('addDetailButton').addEventListener('click', function () {
+            detailIndex++;  // Increment the detail index
+
+            // Create a new container div for product detail
+            var detailContainer = document.createElement('div');
+            detailContainer.classList.add('product-detail');
+            detailContainer.id = `productDetail_${detailIndex}`;
+
+            // Create key input element
+            var keyInput = document.createElement('input');
+            keyInput.type = 'text';
+            keyInput.name = `EditProductDto.Details[${detailIndex}].Key`;
+            keyInput.classList.add('form-control');
+
+            // Create value input element
+            var valueInput = document.createElement('input');
+            valueInput.type = 'text';
+            valueInput.name = `EditProductDto.Details[${detailIndex}].Value`;
+            valueInput.classList.add('form-control');
+
+            // Create IsMain checkbox
+            var isMainCheckbox = document.createElement('input');
+            isMainCheckbox.type = 'checkbox';
+            isMainCheckbox.name = `EditProductDto.Details[${detailIndex}].IsMain`;
+            isMainCheckbox.value = "true";
+
+            // Add hidden field to send false when checkbox is unchecked
+            var hiddenIsMain = document.createElement('input');
+            hiddenIsMain.type = 'hidden';
+            hiddenIsMain.name = `EditProductDto.Details[${detailIndex}].IsMain`;
+            hiddenIsMain.value = "false";
+
+            // Create labels for inputs
+            var keyLabel = document.createElement('label');
+            keyLabel.textContent = 'Key:';
+
+            var valueLabel = document.createElement('label');
+            valueLabel.textContent = 'Value:';
+
+            var isMainLabel = document.createElement('label');
+            isMainLabel.textContent = 'Is Main:';
+
+            // Append all elements to their respective divs
+            var keyDiv = document.createElement('div');
+            keyDiv.classList.add('form-group');
+            keyDiv.appendChild(keyLabel);
+            keyDiv.appendChild(keyInput);
+
+            var valueDiv = document.createElement('div');
+            valueDiv.classList.add('form-group');
+            valueDiv.appendChild(valueLabel);
+            valueDiv.appendChild(valueInput);
+
+            var isMainDiv = document.createElement('div');
+            isMainDiv.classList.add('form-group');
+            isMainDiv.appendChild(isMainLabel);
+            isMainDiv.appendChild(isMainCheckbox);
+            isMainDiv.appendChild(hiddenIsMain);
+
+            // Append the groups to the main detail container
+            detailContainer.appendChild(keyDiv);
+            detailContainer.appendChild(valueDiv);
+            detailContainer.appendChild(isMainDiv);
+
+            // Append the new detail container to the product details section
+            document.getElementById('productDetailsContainer').appendChild(detailContainer);
+        });
+
+        // Handle category selection changes to dynamically load subcategories
+        document.getElementById('categorySelect').addEventListener('change', function () {
+            var categoryId = this.value;
+            var subcategorySelect = document.getElementById('subcategorySelect');
+
+            // Clear previous subcategories
+            subcategorySelect.innerHTML = '<option value="">Select a subcategory</option>';
+
+            var categories = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.Categories));
+
+            if (categoryId) {
+                var selectedCategory = categories.find(c => c.Id == categoryId);
+                selectedCategory.Subcategories.forEach(function (subcategory) {
+                    var option = document.createElement('option');
+                    option.value = subcategory.Id;
+                    option.textContent = subcategory.Name;
+                    subcategorySelect.appendChild(option);
+                });
+            }
+        });
+    </script>
+}

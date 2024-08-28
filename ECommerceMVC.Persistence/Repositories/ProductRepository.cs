@@ -22,6 +22,7 @@ public class ProductRepository(IBaseRepository _baseRepository) : IProductReposi
     public async Task<IEnumerable<ProductEntity>> GetPagedByUserFiltersAsync(GetPagedByFiltersTransferDto filters, CancellationToken ct)
     {
         var query = _baseRepository.GetAll<ProductEntity>()
+            .Include(p => p.ProductDetails)
             .Where(p => p.ProductSubcategoryId == filters.ProductSubcategoryId);
 
         if (filters.MinPrice > 0)
@@ -32,7 +33,7 @@ public class ProductRepository(IBaseRepository _baseRepository) : IProductReposi
         if (filters.MaxPrice > 0)
         {
             query = query.Where(p => p.Price <= filters.MaxPrice);
-        }      
+        }
 
         query = query.OrderBy(p => p.Price)
             .Skip(filters.CurrentPage * filters.PageSize - filters.PageSize)
@@ -77,6 +78,7 @@ public class ProductRepository(IBaseRepository _baseRepository) : IProductReposi
     public async Task<ProductEntity> GetByIdAsync(int productId, CancellationToken ct)
     {
         var product = await _baseRepository.GetAll<ProductEntity>()
+                                           .Include(p => p.ProductDetails)
                                            .FirstOrDefaultAsync(p => p.Id == productId, ct);
 
         if (product == null)

@@ -80,11 +80,29 @@ public class ProductService(IProductRepository _productRepository,
 
     public async Task<bool> EditAsync(EditProductDto editProductDto, CancellationToken ct)
     {
+        using var transaction = await _unitOfWork.BeginTransactionAsync();
+        try
+        {
+            var editedProduct = _mapper.Map<ProductEntity>(editProductDto);
+            await _productRepository.EditAsync(editedProduct, ct);
 
-        var editedProduct = _mapper.Map<ProductEntity>(editProductDto);
+            var productDetailsEntity = _mapper.Map<List<ProductDetailsEntity>>(editProductDto.Details);
+            foreach (var productDetails in productDetailsEntity)
+            {
+                productDetails.ProductId = editedProduct.Id;
+            }
+            await _productDetailsRepository.EditRangeAsync(productDetailsEntity, ct);
 
-        return await _productRepository.EditAsync(editedProduct, ct);
+            return true;
+        }
+        catch (Exception ex)
+        {
+            transaction.Rollback();
+            throw new Exception(ex.Message);
+        }
+
     }
+
 
     public async Task<ProductDto> GetByIdAsync(int productId, CancellationToken ct)
     {
@@ -95,7 +113,7 @@ public class ProductService(IProductRepository _productRepository,
 
     }
 
-    public async Task<IEnumerable<ProductCategoryDto>> GetAllAsync(CancellationToken ct)
+    public async Task<IEnumerable<ProductCategoryDto>> GetAllCategoriesAsync(CancellationToken ct)
     {
         var productCategoryEntities = await _productCategoryRepository.GetAllAsync(ct);
         var productCategoriesDto = _mapper.Map<IEnumerable<ProductCategoryDto>>(productCategoryEntities);

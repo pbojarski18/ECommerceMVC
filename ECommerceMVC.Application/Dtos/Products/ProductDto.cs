@@ -1,4 +1,5 @@
-﻿using ECommerceMVC.Domain.Enums;
+﻿using ECommerceMVC.Domain.Entities;
+using ECommerceMVC.Domain.Enums;
 
 namespace ECommerceMVC.Application.Dtos.Products;
 
@@ -11,12 +12,14 @@ public class ProductDto
 
     public int ProductQuantity { get; set; }
 
-    public string Name { get; set; }
+    public string Name { get; set; } = string.Empty;
 
-    public string Description { get; set; }
+    public string Description { get; set; } = string.Empty;
 
-    public string ImagePath { get; set; }
+    public string ImagePath { get; set; } = string.Empty;
 
-    public string Brand { get; set; }
+    public string Brand { get; set; } = string.Empty;
+
+    public List<ProductDetailsDto> ProductDetails { get; set; } = new List<ProductDetailsDto>();
 
 }

@@ -52,7 +52,7 @@ public class ApplicationDbContext : IdentityDbContext<IdentityUser>, IUnitOfWork
         modelBuilder.Entity<ProductEntity>()
             .Property(p => p.Description)
             .IsRequired()
-            .HasMaxLength(1000);
+            .HasMaxLength(3000);
         modelBuilder.Entity<ProductEntity>()
             .HasOne(p => p.ProductSubcategory)
             .WithMany(p => p.Products)
