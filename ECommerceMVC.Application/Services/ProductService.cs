@@ -64,6 +64,7 @@ public class ProductService(IProductRepository _productRepository,
             var stockHistory = new StockHistoryEntity { ProductQuantity = 0, CreateTimeUtc = DateTime.UtcNow, ProductId = productEntity.Id, StockId = stockEntity.Id, Message = $"Stock's been created for item {productEntity.Name}" };
             await _stockHistoryRepository.AddAsync(stockHistory, ct);
 
+            transaction.Commit();
             return productEntity.Id;
         }
         catch (Exception ex)
@@ -93,6 +94,7 @@ public class ProductService(IProductRepository _productRepository,
             }
             await _productDetailsRepository.EditRangeAsync(productDetailsEntity, ct);
 
+            transaction.Commit();
             return true;
         }
         catch (Exception ex)

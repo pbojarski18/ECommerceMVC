@@ -115,11 +115,18 @@ public class ProductController(IProductService _productService,
         //var result = await _productDtoValidator.ValidateAsync(editProductDto);
         //if (result.IsValid)
         //{
-            var model = await _productService.EditAsync(editProductDto, default);
-            return RedirectToAction(nameof(Index));
+        var model = await _productService.EditAsync(editProductDto, default);
+        return RedirectToAction(nameof(Index));
         //}
 
         //return View(editProductDto);
     }
 
+    [HttpGet("ProductDetails")]
+    public async Task<IActionResult> ProductDetails(int id)
+    {
+        var model = await _productService.GetByIdAsync(id, default);
+
+        return View(model);
+    }
 }

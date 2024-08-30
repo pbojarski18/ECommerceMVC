@@ -44,6 +44,8 @@ public class StockService(IStockRepository _stockRepository,
             }
             var stockHistory = new StockHistoryEntity { ProductQuantity = stock.ProductQuantity, CreateTimeUtc = DateTime.UtcNow, ProductId = stock.ProductId, StockId = stock.Id, Message = message };
             await _stockHistoryRepository.AddAsync(stockHistory, ct);
+
+            transaction.Commit();
             return true;
         }
         catch (Exception ex)

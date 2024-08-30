@@ -14,18 +14,18 @@
     <div class="tab-contents">
         @foreach (var category in Model.ProductCategories)
         {
-            <div id="category-@category.Id" class="tab-content">               
+            <div id="category-@category.Id" class="tab-content">
                 <div class="subcategory-buttons">
                     @foreach (var subCategory in category.Subcategories)
                     {
                         <form method="get" asp-action="by-id" asp-route-productSubcategoryId="@subCategory.Id" asp-controller="Product">
                             <input type="hidden" name="Id" value="@subCategory.Id" />
-                        <button class="subcategory-button" type="submit">
-                            @subCategory.Name
-                        </button>
+                            <button class="subcategory-button" type="submit">
+                                @subCategory.Name
+                            </button>
 
                         </form>
-                        
+
                     }
                 </div>
             </div>
@@ -57,7 +57,12 @@
                             </p>
                             <div class="mt-auto">
                                 <p class="card-text text-primary">@product.Price.ToString("C")</p>
-                                <button class="btn btn-outline-primary">View Details</button>
+                                <form method="get" asp-action="ProductDetails" asp-route-id="@product.Id" asp-controller="Product">
+                                    <input type="hidden" name="Id" value="@product.Id" />
+                                    <button class="subcategory-button" type="submit">
+                                        Product Details
+                                    </button>
+                                </form>
                                 @if (product.ProductQuantity > 0)
                                 {
                                     <button type="button" class="btn btn-danger btn-sm"
@@ -81,7 +86,28 @@
         </div>
     </div>
 }
-<div class="p-5" />
+<div class="modal" id="basketModal" tabindex="-1" role="dialog" aria-labelledby="basketModalLabel" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="basketModalLabel">Add to basket</h5>
+                <button type="button" class="close" onclick="closeBasketModal()" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form method="post" asp-action="AddBasket" asp-controller="Basket">
+                    <input type="hidden" name="productId" id="productIdInput" />
+                    <input type="hidden" name="totalCost" id="totalCostInput" />
+                    <div class="form-group">
+                        <label for="quantityInput">Quantity:</label>
+                        <input type="number" class="form-control" id="quantityInput" name="productQuantity" min="1" value="1" />
+                    </div>
+                    <button type="submit" class="btn btn-primary">Add to basket</button>
+                </form>
+            </div>
+        </div>
+    </div>
 </div>
 <style>
     .tabs-container {
@@ -148,6 +174,48 @@
         .subcategory-button:hover {
             background-color: #0056b3;
         }
+
+    .card {
+        transition: transform 0.2s;
+    }
+
+        .card:hover {
+            transform: scale(1.05);
+        }
+
+    .card-title {
+        font-weight: bold;
+    }
+
+    .card-text {
+        overflow-wrap: break-word;
+        word-wrap: break-word;
+        hyphens: auto;
+    }
+
+
+
+    .modal {
+        display: none; /* Ukryj modal domyślnie */
+        position: fixed;
+        z-index: 1050;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0, 0, 0, 0.5); /* Tło */
+    }
+
+    .modal-dialog {
+        margin: 15% auto;
+        max-width: 500px;
+    }
+
+    /* Klasa do blokowania interakcji z tłem */
+    .modal-open {
+        overflow: hidden; /* Zablokuj przewijanie tła */
+    }
 </style>
 
 <script>
@@ -162,6 +230,30 @@
         const activeContent = document.getElementById('category-' + categoryId);
         if (activeContent) {
             activeContent.classList.add('active');
+        }
+    }
+
+    function openBasketModal(productId, productPrice) {
+        document.getElementById('productIdInput').value = productId;
+        document.getElementById('totalCostInput').value = productPrice;
+        var modal = document.getElementById('basketModal');
+        modal.style.display = "block"; // Otwórz modal
+        modal.setAttribute('aria-hidden', 'false'); // Ustaw aria-hidden na false
+        document.body.classList.add('modal-open'); // Dodaj klasę do body, aby zablokować przewijanie
+    }
+
+    function closeBasketModal() {
+        var modal = document.getElementById('basketModal');
+        modal.style.display = "none"; // Zamknij modal
+        modal.setAttribute('aria-hidden', 'true'); // Ustaw aria-hidden na true
+        document.body.classList.remove('modal-open'); // Usuń klasę z body, aby przywrócić przewijanie
+    }
+
+    // Zamknij modal po kliknięciu w tło
+    window.onclick = function (event) {
+        var modal = document.getElementById('basketModal');
+        if (event.target === modal) {
+            closeBasketModal();
         }
     }
 

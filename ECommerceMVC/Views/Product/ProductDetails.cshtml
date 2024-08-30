@@ -1,0 +1,139 @@
+﻿@model ECommerceMVC.Application.Dtos.Products.ProductDto
+
+@{
+    ViewData["Title"] = Model.Name;
+}
+
+<div class="product-container">
+    <div class="product-image">
+        <img src="@Model.ImagePath" alt="@Model.Name" />
+    </div>
+    <div class="product-details">
+        <h1>@Model.Name</h1>
+        <p class="brand">Brand: <strong>@Model.Brand</strong></p>
+        <p class="price">$@Model.Price.ToString("F2")</p>
+        <p class="description">@Model.Description</p>
+        <div class="quantity">
+            <label for="product-quantity">Quantity:</label>
+            <input type="number" id="product-quantity" value="@Model.ProductQuantity" min="1" />
+        </div>
+        <button class="btn-add-to-cart">Add to Cart</button>
+    </div>
+</div>
+
+<div class="product-details-list">
+    <h2>Product Details</h2>
+    <ul>
+        @foreach (var detail in Model.ProductDetails)
+        {
+            <li><strong>@detail.Key:</strong> @detail.Value</li>
+        }
+    </ul>
+</div>
+
+<style>
+    body {
+        font-family: 'Arial', sans-serif;
+        background-color: #f4f4f4;
+        color: #333;
+        line-height: 1.6;
+    }
+
+    .product-container {
+        display: flex;
+        max-width: 900px;
+        margin: 40px auto;
+        border: 1px solid #ddd;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        background-color: #fff;
+    }
+
+    .product-image img {
+        max-width: 100%;
+        height: auto;
+        border-right: 1px solid #ddd;
+        transition: transform 0.3s;
+    }
+
+        .product-image img:hover {
+            transform: scale(1.05);
+        }
+
+    .product-details {
+        padding: 30px;
+        flex: 1;
+    }
+
+        .product-details h1 {
+            font-size: 28px;
+            margin-bottom: 15px;
+            color: #2c3e50;
+        }
+
+    .brand, .price, .description {
+        margin: 10px 0;
+        font-size: 18px;
+    }
+
+    .quantity {
+        margin: 15px 0;
+    }
+
+        .quantity label {
+            margin-right: 10px;
+        }
+
+    input[type="number"] {
+        width: 60px;
+        padding: 5px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+
+    .btn-add-to-cart {
+        padding: 12px 20px;
+        background-color: #3498db;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 16px;
+        transition: background-color 0.3s, transform 0.3s;
+    }
+
+        .btn-add-to-cart:hover {
+            background-color: #2980b9;
+            transform: translateY(-2px);
+        }
+
+    .product-details-list {
+        margin-top: 30px;
+        padding: 20px;
+        background-color: #f9f9f9;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+        .product-details-list h2 {
+            font-size: 24px;
+            margin-bottom: 15px;
+            color: #34495e;
+        }
+
+        .product-details-list ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .product-details-list li {
+            padding: 8px 0;
+            font-size: 16px;
+            border-bottom: 1px solid #ddd;
+        }
+
+            .product-details-list li:last-child {
+                border-bottom: none;
+            }
+</style>
