@@ -38,7 +38,7 @@ public class ProductServiceTests : IClassFixture<MappingTestFixture>
                 Description = "This is description",
                 ImagePath = "url",
                 Brand = "Head",
-                ProductSubcategoryId = 1                
+                ProductSubcategoryId = 1
             }
 
         };
@@ -56,7 +56,7 @@ public class ProductServiceTests : IClassFixture<MappingTestFixture>
         result.First().Price.Should().Be(17);
         result.First().Description.Should().Be("This is description");
         result.First().ImagePath.Should().Be("url");
-        result.First().Brand.Should().Be("Head");       
+        result.First().Brand.Should().Be("Head");
     }
 
     [Fact]
@@ -113,7 +113,7 @@ public class ProductServiceTests : IClassFixture<MappingTestFixture>
             Brand = "Head",
             ProductSubcategoryId = 1
         };
-        
+
 
         var transactionMock = new Mock<IDbTransaction>();
 
@@ -131,21 +131,99 @@ public class ProductServiceTests : IClassFixture<MappingTestFixture>
 
         //Assert//
         transactionMock.Verify(x => x.Commit(), Times.Once);
-       
+
+    }
+
+    [Fact]
+    public async Task EditAsync_ShouldEditProduct()
+    {
+        //Arrange
+        var product = new EditProductDto()
+
+        {
+            Id = 1,
+            Name = "Dodo",
+            Price = 17,
+            Description = "This is description",
+            ImagePath = "url",
+            Brand = "Head",
+            ProductSubcategoryId = 1,
+        };
+
+        var transactionMock = new Mock<IDbTransaction>();
+
+        unitOfWorkMock.Setup(x => x.BeginTransactionAsync()).ReturnsAsync(transactionMock.Object);
+        productRepositoryMock.Setup(x => x.EditAsync(It.IsAny<ProductEntity>(), It.IsAny<CancellationToken>()));
+        productDetailsRepositoryMock.Setup(x => x.EditRangeAsync(It.IsAny<IEnumerable<ProductDetailsEntity>>(), It.IsAny<CancellationToken>()));
+        transactionMock.Setup(x => x.Commit());
+
+        var productService = new ProductService(productRepositoryMock.Object, mapper, productCategoryRepositoryMock.Object, stockRepositoryMock.Object, stockHistoryRepositoryMock.Object, unitOfWorkMock.Object, productDetailsRepositoryMock.Object);
+
+        //Act
+        var result = await productService.EditAsync(product, default);
+
+        //Assert//
+        transactionMock.Verify(x => x.Commit(), Times.Once);
+    }
+
+    [Fact]
+    public async Task GetByIdAsync_ShouldReturnProductById()
+    {
+        var product = new ProductEntity()
+        {
+            Id = 1,
+            Name = "Dodo",
+            Price = 17,
+            Description = "This is description",
+            ImagePath = "url",
+            Brand = "Head",
+            ProductSubcategoryId = 1
+        };
+
+        productRepositoryMock.Setup(x => x.GetByIdAsync(It.IsAny<int>(), It.IsAny<CancellationToken>())).ReturnsAsync(product);
+
+        var productService = new ProductService(productRepositoryMock.Object, mapper, productCategoryRepositoryMock.Object, stockRepositoryMock.Object, stockHistoryRepositoryMock.Object, unitOfWorkMock.Object, productDetailsRepositoryMock.Object);
+
+        //Act
+        var result = await productService.GetByIdAsync(1, default);
+
+        //Assert
+
+        result.Id.Should().Be(1);
+        result.Name.Should().Be("Dodo");
+        result.Price.Should().Be(17);
+        result.Description.Should().Be("This is description");
+        result.ImagePath.Should().Be("url");
+        result.Brand.Should().Be("Head");
+        result.ProductSubcategoryId.Should().Be(1);
+
+    }
+
+    [Fact]
+
+    public async Task GetAllCategoriesAsync_ShouldReturnMappedCategories()
+    {
+        //Arrange
+        var categories = new List<ProductCategoryEntity>()
+        {
+            new ProductCategoryEntity
+            {
+                Id = 1,
+                Name = "Rackets"
+            }
+        };
+
+        productCategoryRepositoryMock.Setup(x => x.GetAllAsync(It.IsAny<CancellationToken>())).ReturnsAsync(categories);
+
+        var productService = new ProductService(productRepositoryMock.Object, mapper, productCategoryRepositoryMock.Object, stockRepositoryMock.Object, stockHistoryRepositoryMock.Object, unitOfWorkMock.Object, productDetailsRepositoryMock.Object);
+
+        //Act//
+        var result = await productService.GetAllCategoriesAsync(default);
+
+        //Assert//
+        result.First().Id.Should().Be(1);
+        result.First().Name.Should().Be("Rackets");
     }
 }
-    //public async Task RemoveAsync_ShouldRemoveProduct()
-    //{
-    //    //Arrange      
-    //    repositoryMock.Setup(x => x.RemoveAsync(It.IsAny<int>(), It.IsAny<CancellationToken>())).ReturnsAsync(true);
-
-    //    var productService = new ProductService(repositoryMock.Object, mapper);
-
-    //    //Act
-    //    var result = await productService.RemoveAsync(1, default);
-
-    //    //Assert
-    //    result.Should().BeTrue();
-    //}
 
 
