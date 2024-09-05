@@ -110,11 +110,23 @@ public class ProductController(IProductService _productService,
     }
 
     [HttpPost("EditProduct")]
-    public async Task<IActionResult> EditProduct(EditProductDto editProductDto)
+    public async Task<IActionResult> EditProduct(EditProductDto editProductDto, IFormFile file)
     {
         //var result = await _productDtoValidator.ValidateAsync(editProductDto);
         //if (result.IsValid)
         //{
+        if ((file == null || file.Length == 0) && string.IsNullOrEmpty(editProductDto.ImagePath))
+        {
+            ModelState.AddModelError("File", "No file uploaded.");
+            return View(editProductDto);
+        }
+        if (file != null)
+        {
+            var filePath = await _fileSaver.SaveFile(file);
+            // Przypisz ścieżkę obrazu do produktu
+            editProductDto.ImagePath = filePath;           
+        }     
+
         var model = await _productService.EditAsync(editProductDto, default);
         return RedirectToAction(nameof(Index));
         //}

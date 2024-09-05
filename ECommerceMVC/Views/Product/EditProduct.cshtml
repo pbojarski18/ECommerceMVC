@@ -6,24 +6,19 @@
     <form method="post" asp-action="EditProduct" enctype="multipart/form-data">
         <input type="hidden" asp-for="@Model.EditProductDto.Id" />
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-
         <div class="form-group col-12">
-            <label>Product Category:</label>
-            <select id="categorySelect" class="form-control" required>
-                <option value="">Select a category</option>
-                @foreach (var category in Model.Categories)
-                {
-                    <option value="@category.Id">@category.Name</option>
-                }
-            </select>
-        </div>
-
-        <div class="form-group col-12">
-            <label>Product Subcategory:</label>
-            <select id="subcategorySelect" class="form-control" asp-for="@Model.EditProductDto.ProductSubcategoryId" required>
-                <option value="">Select a subcategory</option>
-            </select>
-        </div>
+    <label>Product Subcategory:</label>
+    <select id="subcategorySelect" class="form-control" asp-for="@Model.EditProductDto.ProductSubcategoryId" required>
+        <option value="">Select a subcategory</option>
+        @if (Model.Categories.SelectMany(p => p.Subcategories) != null)
+        {
+                    foreach (var subcategory in Model.Categories.SelectMany(p => p.Subcategories))
+            {
+                <option value="@subcategory.Id" class="@(subcategory.Id == Model.EditProductDto.ProductSubcategoryId ? "selected" : "")">@subcategory.Name</option>
+            }
+        }
+    </select>
+</div>
 
         <div class="form-group col-12">
             <label>Name:</label>
@@ -44,8 +39,18 @@
         </div>
 
         <div class="form-group col-12">
-            <input type="file" name="file" id="fileInput" />
+            <label>Upload Image:</label>
+            <input type="text" asp-for="@Model.EditProductDto.ImagePath" hidden />
+            <input type="file" name="file" id="fileInput" class="form-control" />
+
+            @if (!string.IsNullOrEmpty(Model.EditProductDto.ImagePath))
+            {
+                <div>
+                    <img src="@Url.Content(Model.EditProductDto.ImagePath)" alt="Current Image" width="200" />
+                </div>
+            }
         </div>
+
 
         <div class="form-group col-12">
             <label>Brand:</label>
@@ -53,11 +58,13 @@
             <span asp-validation-for="@Model.EditProductDto.Brand" class="text-danger"></span>
         </div>
 
+
         <div id="productDetailsContainer">
             <h4>Product Details</h4>
             @for (int i = 0; i < Model.EditProductDto.Details.Count(); i++)
             {
                 <div class="product-detail" id="productDetail_@i">
+                    <input type="hidden" name="EditProductDto.Details[@i].Id" value="@Model.EditProductDto.Details[i].Id" />
                     <div class="form-group">
                         <label>Key:</label>
                         <input type="text" name="EditProductDto.Details[@i].Key" value="@Model.EditProductDto.Details[@i].Key" class="form-control" />
@@ -76,7 +83,7 @@
         </div>
 
         <button type="button" class="btn btn-secondary" id="addDetailButton">Add Product Detail</button>
-        <button type="submit" class="btn btn-primary">Add Product</button>
+        <button type="submit" class="btn btn-primary">Update Product</button>
     </form>
 </div>
 
@@ -84,6 +91,12 @@
     <script>
         // Initialize the detail index based on the current count of product details
         let detailIndex = @Model.EditProductDto.Details.Count() - 1;
+
+        
+        // Call the function to populate subcategories on page load
+        document.addEventListener('DOMContentLoaded', function () {
+            populateSubcategories();
+        });
 
         // Add event listener for adding new product detail
         document.getElementById('addDetailButton').addEventListener('click', function () {
@@ -93,6 +106,12 @@
             var detailContainer = document.createElement('div');
             detailContainer.classList.add('product-detail');
             detailContainer.id = `productDetail_${detailIndex}`;
+
+            // Create hidden ID input for new detail
+            var idInput = document.createElement('input');
+            idInput.type = 'hidden';
+            idInput.name = `EditProductDto.Details[${detailIndex}].Id`;
+            idInput.value = '0'; // Set to 0 for new detail
 
             // Create key input element
             var keyInput = document.createElement('input');
@@ -145,6 +164,8 @@
             isMainDiv.appendChild(isMainCheckbox);
             isMainDiv.appendChild(hiddenIsMain);
 
+            // Append the ID input to the detail container
+            detailContainer.appendChild(idInput);
             // Append the groups to the main detail container
             detailContainer.appendChild(keyDiv);
             detailContainer.appendChild(valueDiv);
@@ -155,24 +176,6 @@
         });
 
         // Handle category selection changes to dynamically load subcategories
-        document.getElementById('categorySelect').addEventListener('change', function () {
-            var categoryId = this.value;
-            var subcategorySelect = document.getElementById('subcategorySelect');
-
-            // Clear previous subcategories
-            subcategorySelect.innerHTML = '<option value="">Select a subcategory</option>';
-
-            var categories = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.Categories));
-
-            if (categoryId) {
-                var selectedCategory = categories.find(c => c.Id == categoryId);
-                selectedCategory.Subcategories.forEach(function (subcategory) {
-                    var option = document.createElement('option');
-                    option.value = subcategory.Id;
-                    option.textContent = subcategory.Name;
-                    subcategorySelect.appendChild(option);
-                });
-            }
-        });
+        document.getElementById('categorySelect').addEventListener('change', populateSubcategories);
     </script>
 }
