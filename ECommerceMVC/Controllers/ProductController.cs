@@ -19,11 +19,22 @@ public class ProductController(IProductService _productService,
     private readonly AddProductDtoValidator _productDtoValidator = _productDtoValidator;
     private readonly IFileSaver _fileSaver = _fileSaver;
 
+    [HttpGet("admin-products")]
     public async Task<IActionResult> Index()
     {
-        var model = await _productService.GetAllByFiltersAsync(default);
+        var categories = await _productService.GetAllCategoriesAsync(default);
+        var model = new CustomerProductViewModel() { ProductCategories = categories };
         return View(model);
+    }
 
+    [HttpGet("admin-get-by-id")]
+    public async Task<IActionResult> Index(int Id)
+    {
+        var model = new CustomerProductViewModel();
+        model.GetPagedByFiltersTransferDto = new GetPagedByFiltersTransferDto() { ProductSubcategoryId = Id, CurrentPage = 1, PageSize = 20 };
+        model.ProductCategories = await _productService.GetAllCategoriesAsync(default);
+        model.Products = await _productService.GetPagedByUserFiltersAsync(model.GetPagedByFiltersTransferDto, default);
+        return View(model);
     }
 
 
@@ -140,5 +151,13 @@ public class ProductController(IProductService _productService,
         var model = await _productService.GetByIdAsync(id, default);
 
         return View(model);
+    }
+
+    [HttpPost("delete-by-id")]
+    public async Task<IActionResult> DeleteProductDetail(int id)
+    {
+        var model = await _productService.RemoveDetailAsync(id, default);
+
+        return NoContent();
     }
 }

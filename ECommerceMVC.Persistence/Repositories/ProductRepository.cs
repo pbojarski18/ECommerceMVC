@@ -23,6 +23,7 @@ public class ProductRepository(IBaseRepository _baseRepository) : IProductReposi
     {
         var query = _baseRepository.GetAll<ProductEntity>()
             .Include(p => p.ProductDetails)
+            .Include(p => p.Stock)
             .Where(p => p.ProductSubcategoryId == filters.ProductSubcategoryId);
 
         if (filters.MinPrice > 0)
@@ -79,6 +80,7 @@ public class ProductRepository(IBaseRepository _baseRepository) : IProductReposi
     {
         var product = await _baseRepository.GetAll<ProductEntity>()
                                            .Include(p => p.ProductDetails)
+                                           .Include(p => p.Stock)
                                            .FirstOrDefaultAsync(p => p.Id == productId, ct);
 
         if (product == null)

@@ -4,43 +4,44 @@
 <h2>Edit Product</h2>
 <div class="d-flex flex-column col-6 justify-content-start align-items-center">
     <form method="post" asp-action="EditProduct" enctype="multipart/form-data">
-        <input type="hidden" asp-for="@Model.EditProductDto.Id" />
+        <input type="hidden" asp-for="EditProductDto.Id" />
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
         <div class="form-group col-12">
-    <label>Product Subcategory:</label>
-    <select id="subcategorySelect" class="form-control" asp-for="@Model.EditProductDto.ProductSubcategoryId" required>
-        <option value="">Select a subcategory</option>
-        @if (Model.Categories.SelectMany(p => p.Subcategories) != null)
-        {
+            <label>Product Subcategory:</label>
+            <select id="subcategorySelect" class="form-control" asp-for="EditProductDto.ProductSubcategoryId" required>
+                <option value="">Select a subcategory</option>
+                @if (Model.Categories.SelectMany(p => p.Subcategories) != null)
+                {
                     foreach (var subcategory in Model.Categories.SelectMany(p => p.Subcategories))
-            {
-                <option value="@subcategory.Id" class="@(subcategory.Id == Model.EditProductDto.ProductSubcategoryId ? "selected" : "")">@subcategory.Name</option>
-            }
-        }
-    </select>
-</div>
+                    {
+                        <option value="@subcategory.Id" class="@(subcategory.Id == Model.EditProductDto.ProductSubcategoryId ? "selected" : "")">@subcategory.Name</option>
+                    }
+                }
+            </select>
+        </div>
 
         <div class="form-group col-12">
             <label>Name:</label>
-            <input type="text" asp-for="@Model.EditProductDto.Name" class="form-control" required />
-            <span asp-validation-for="@Model.EditProductDto.Name" class="text-danger"></span>
+            <input type="text" asp-for="EditProductDto.Name" class="form-control" required />
+            <span asp-validation-for="EditProductDto.Name" class="text-danger"></span>
         </div>
 
         <div class="form-group col-12">
             <label>Price:</label>
-            <input type="number" asp-for="@Model.EditProductDto.Price" class="form-control" required />
-            <span asp-validation-for="@Model.EditProductDto.Price" class="text-danger"></span>
+            <input type="number" asp-for="EditProductDto.Price" class="form-control" required />
+            <span asp-validation-for="EditProductDto.Price" class="text-danger"></span>
         </div>
 
         <div class="form-group col-12">
             <label>Description:</label>
-            <textarea asp-for="@Model.EditProductDto.Description" class="form-control"></textarea>
-            <span asp-validation-for="@Model.EditProductDto.Description" class="text-danger"></span>
+            <textarea asp-for="EditProductDto.Description" class="form-control"></textarea>
+            <span asp-validation-for="EditProductDto.Description" class="text-danger"></span>
         </div>
 
         <div class="form-group col-12">
             <label>Upload Image:</label>
-            <input type="text" asp-for="@Model.EditProductDto.ImagePath" hidden />
+            <input type="text" asp-for="EditProductDto.ImagePath" hidden />
             <input type="file" name="file" id="fileInput" class="form-control" />
 
             @if (!string.IsNullOrEmpty(Model.EditProductDto.ImagePath))
@@ -51,13 +52,11 @@
             }
         </div>
 
-
         <div class="form-group col-12">
             <label>Brand:</label>
-            <input type="text" asp-for="@Model.EditProductDto.Brand" class="form-control" />
-            <span asp-validation-for="@Model.EditProductDto.Brand" class="text-danger"></span>
+            <input type="text" asp-for="EditProductDto.Brand" class="form-control" />
+            <span asp-validation-for="EditProductDto.Brand" class="text-danger"></span>
         </div>
-
 
         <div id="productDetailsContainer">
             <h4>Product Details</h4>
@@ -67,16 +66,22 @@
                     <input type="hidden" name="EditProductDto.Details[@i].Id" value="@Model.EditProductDto.Details[i].Id" />
                     <div class="form-group">
                         <label>Key:</label>
-                        <input type="text" name="EditProductDto.Details[@i].Key" value="@Model.EditProductDto.Details[@i].Key" class="form-control" />
+                        <input type="text" name="EditProductDto.Details[@i].Key" value="@Model.EditProductDto.Details[i].Key" class="form-control" />
                     </div>
                     <div class="form-group">
                         <label>Value:</label>
-                        <input type="text" name="EditProductDto.Details[@i].Value" value="@Model.EditProductDto.Details[@i].Value" class="form-control" />
+                        <input type="text" name="EditProductDto.Details[@i].Value" value="@Model.EditProductDto.Details[i].Value" class="form-control" />
                     </div>
                     <div class="form-group">
                         <label>Is Main:</label>
                         <input type="checkbox" name="EditProductDto.Details[@i].IsMain" value="true" @(Model.EditProductDto.Details[@i].IsMain ? "checked" : "") />
                         <input type="hidden" name="EditProductDto.Details[@i].IsMain" value="false" />
+                    </div>
+                    <div class="form-group">
+                        <!-- Delete button outside of form -->
+                        <button class="alert-danger delete-detail-button" type="button" data-detail-id="@Model.EditProductDto.Details[i].Id">
+                            Delete
+                        </button>
                     </div>
                 </div>
             }
@@ -87,12 +92,16 @@
     </form>
 </div>
 
+<!-- Delete form moved outside the main form -->
+<form id="deleteDetailForm" method="post" asp-action="delete-by-id" style="display:none;">
+    <input type="hidden" name="id" id="deleteDetailId" />
+</form>
+
 @section Scripts {
     <script>
         // Initialize the detail index based on the current count of product details
         let detailIndex = @Model.EditProductDto.Details.Count() - 1;
 
-        
         // Call the function to populate subcategories on page load
         document.addEventListener('DOMContentLoaded', function () {
             populateSubcategories();
@@ -175,7 +184,20 @@
             document.getElementById('productDetailsContainer').appendChild(detailContainer);
         });
 
-        // Handle category selection changes to dynamically load subcategories
-        document.getElementById('categorySelect').addEventListener('change', populateSubcategories);
+        // Event listener for delete buttons
+        document.querySelectorAll('.delete-detail-button').forEach(button => {
+            button.addEventListener('click', function () {
+                const detailId = this.getAttribute('data-detail-id');
+                if (confirm('Are you sure you want to delete this detail?')) {
+                    document.getElementById('deleteDetailId').value = detailId;
+                    document.getElementById('deleteDetailForm').submit();
+                }
+            });
+        });
+
+        // Function to populate subcategories dynamically (Add your logic here)
+        function populateSubcategories() {
+            // Logic to populate subcategories based on selected category
+        }
     </script>
 }

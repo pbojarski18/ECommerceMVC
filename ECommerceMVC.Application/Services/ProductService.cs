@@ -123,6 +123,9 @@ public class ProductService(IProductRepository _productRepository,
         return productCategoriesDto;
     }
 
-
+    public async Task<bool> RemoveDetailAsync(int productDetailId, CancellationToken ct)
+    {
+        return await _productDetailsRepository.RemoveAsync(productDetailId, ct);
+    }
 
 }

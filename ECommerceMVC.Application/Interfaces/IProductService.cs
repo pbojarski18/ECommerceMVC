@@ -20,4 +20,6 @@ public interface IProductService
     Task<IEnumerable<ProductDto>> GetPagedByUserFiltersAsync(GetPagedByFiltersTransferDto filters, CancellationToken ct);
 
     Task<IEnumerable<ProductCategoryDto>> GetAllCategoriesAsync(CancellationToken ct);
+
+    Task<bool> RemoveDetailAsync(int productDetailId, CancellationToken ct);
 }

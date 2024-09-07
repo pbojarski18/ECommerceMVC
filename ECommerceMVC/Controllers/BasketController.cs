@@ -2,6 +2,7 @@
 using ECommerceMVC.Application.Interfaces;
 using ECommerceMVC.Domain.Enums;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
@@ -21,7 +22,7 @@ public class BasketController(IBasketService _basketService,
         var addBasketDto = new AddBasketDto { IsActive = true, ProductId = productId, ProductQuantity = productQuantity, TotalCost = totalCost, UserId = userId };
         var model = await _basketService.AddAsync(addBasketDto, default);
 
-        return RedirectToAction("CustomerProduct", "Product");
+        return RedirectToAction("customer-product", "Product");
     }
 
 
