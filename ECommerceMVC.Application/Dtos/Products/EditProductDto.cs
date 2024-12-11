@@ -10,7 +10,6 @@ public class EditProductDto
 
     public string Brand { get; set; } = string.Empty;
 
-
     public string Description { get; set; } = string.Empty;
 
     public string ImagePath { get; set; } = string.Empty;
@@ -20,7 +19,6 @@ public class EditProductDto
 
     public EditProductDto()
     {
-
     }
 
     public EditProductDto(ProductDto model)

@@ -36,6 +36,4 @@ public static class FileExtensionHelper
 
         return null;
     }
-
 }
-

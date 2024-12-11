@@ -1,7 +1,5 @@
 ﻿using ECommerceMVC.Application.Dtos.Categories;
 using ECommerceMVC.Application.Dtos.Products;
-using ECommerceMVC.Application.Services;
-using ECommerceMVC.Domain.Enums;
 
 namespace ECommerceMVC.Application.Interfaces;
 

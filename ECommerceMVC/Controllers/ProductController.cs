@@ -1,11 +1,8 @@
 ﻿using ECommerceMVC.Application.Dtos.Products;
 using ECommerceMVC.Application.Interfaces;
 using ECommerceMVC.Application.Validators.Product;
-using ECommerceMVC.Domain.Entities;
-using ECommerceMVC.Domain.Enums;
 using ECommerceMVC.Infrastructure.FileService;
 using ECommerceMVC.ViewModels;
-using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ECommerceMVC.Controllers;
@@ -37,8 +34,6 @@ public class ProductController(IProductService _productService,
         return View(model);
     }
 
-
-
     [HttpGet("customer-product")]
     public async Task<IActionResult> CustomerProduct()
     {
@@ -65,7 +60,6 @@ public class ProductController(IProductService _productService,
         model.Products = await _productService.GetPagedByUserFiltersAsync(filters, default);
         return View(model);
     }
-
 
     [HttpGet("AddProduct")]
     public async Task<IActionResult> AddProduct()
@@ -135,8 +129,8 @@ public class ProductController(IProductService _productService,
         {
             var filePath = await _fileSaver.SaveFile(file);
             // Przypisz ścieżkę obrazu do produktu
-            editProductDto.ImagePath = filePath;           
-        }     
+            editProductDto.ImagePath = filePath;
+        }
 
         var model = await _productService.EditAsync(editProductDto, default);
         return RedirectToAction(nameof(Index));

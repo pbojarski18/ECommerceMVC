@@ -1,14 +1,12 @@
 ﻿using ECommerceMVC.Application.Dtos.Baskets;
 using ECommerceMVC.Application.Interfaces;
-using ECommerceMVC.Domain.Enums;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ECommerceMVC.Controllers;
-[Authorize]
 
+[Authorize]
 public class BasketController(IBasketService _basketService,
                               UserManager<IdentityUser> _userManager) : Controller
 {
@@ -24,7 +22,6 @@ public class BasketController(IBasketService _basketService,
 
         return RedirectToAction("customer-product", "Product");
     }
-
 
     [HttpGet]
     public async Task<IActionResult> Index()

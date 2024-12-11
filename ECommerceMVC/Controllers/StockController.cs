@@ -23,5 +23,3 @@ public class StockController(IStockService _stockService) : Controller
         return RedirectToAction("Index", "Product");
     }
 }
-
-

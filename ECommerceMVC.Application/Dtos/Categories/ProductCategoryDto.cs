@@ -1,6 +1,4 @@
-﻿using ECommerceMVC.Domain.Entities;
-
-namespace ECommerceMVC.Application.Dtos.Categories;
+﻿namespace ECommerceMVC.Application.Dtos.Categories;
 
 public class ProductCategoryDto
 {

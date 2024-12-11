@@ -1,8 +1,6 @@
 ﻿using ECommerceMVC.Application.Dtos.Orders;
 using ECommerceMVC.Application.Interfaces;
-using ECommerceMVC.Application.Services;
 using ECommerceMVC.Application.Validators.Order;
-using ECommerceMVC.Domain.Enums;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
@@ -35,5 +33,4 @@ public class OrderController(IOrderService _orderService,
         await _orderService.AddAsync(createOrderDto, default);
         return RedirectToAction(nameof(Index));
     }
-
 }

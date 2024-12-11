@@ -1,6 +1,5 @@
 ﻿using ECommerceMVC.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
-using System.Runtime.CompilerServices;
 
 namespace ECommerceMVC.Persistence.Seed;
 

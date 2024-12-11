@@ -1,6 +1,4 @@
-﻿using ECommerceMVC.Domain.Entities;
-
-namespace ECommerceMVC.Application.Dtos.Products;
+﻿namespace ECommerceMVC.Application.Dtos.Products;
 
 public class ProductDetailsDto
 {
@@ -11,5 +9,4 @@ public class ProductDetailsDto
     public string Value { get; set; } = string.Empty;
 
     public bool IsMain { get; set; }
-    
 }

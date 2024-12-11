@@ -31,7 +31,6 @@ public class ApplicationDbContext : IdentityDbContext<IdentityUser>, IUnitOfWork
 
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
     {
-
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -60,7 +59,6 @@ public class ApplicationDbContext : IdentityDbContext<IdentityUser>, IUnitOfWork
         modelBuilder.Entity<ProductEntity>()
             .Property(p => p.Brand)
             .IsRequired();
-
 
         modelBuilder.Entity<StockEntity>()
             .HasKey(p => p.Id);
@@ -205,5 +203,3 @@ public class ApplicationDbContext : IdentityDbContext<IdentityUser>, IUnitOfWork
         return (await Database.BeginTransactionAsync()).GetDbTransaction();
     }
 }
-
-

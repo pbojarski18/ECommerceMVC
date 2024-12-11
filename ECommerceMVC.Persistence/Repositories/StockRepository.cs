@@ -1,5 +1,4 @@
-﻿using ECommerceMVC.Application.Services;
-using ECommerceMVC.Domain.Entities;
+﻿using ECommerceMVC.Domain.Entities;
 using ECommerceMVC.Domain.Repositories;
 using Microsoft.EntityFrameworkCore;
 

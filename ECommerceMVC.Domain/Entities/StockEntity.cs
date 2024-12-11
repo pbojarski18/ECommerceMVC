@@ -8,7 +8,6 @@ public class StockEntity : AuditableEntity
 
     public int ProductId { get; set; }
 
-
     public virtual ProductEntity Product { get; set; }
 
     public virtual ICollection<StockHistoryEntity> StockHistories { get; set; }

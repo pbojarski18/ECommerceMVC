@@ -1,13 +1,11 @@
-using ECommerceMVC.Application.Interfaces;
-using ECommerceMVC.Application.Services;
+using ECommerceMVC.Application.Abstraction;
+using ECommerceMVC.Application.Extensions;
 using ECommerceMVC.Domain.Repositories;
+using ECommerceMVC.Infrastructure.FileService;
 using ECommerceMVC.Persistence.Context;
 using ECommerceMVC.Persistence.Repositories;
-using Microsoft.EntityFrameworkCore;
-using ECommerceMVC.Application.Extensions;
-using ECommerceMVC.Infrastructure.FileService;
 using Microsoft.AspNetCore.Identity;
-using ECommerceMVC.Application.Abstraction;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,7 +17,6 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
 {
     options.SignIn.RequireConfirmedAccount = false;
     options.SignIn.RequireConfirmedEmail = false;
-
 }).AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddScoped<IBaseRepository, BaseRepository>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();

@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc.ModelBinding;
-
-namespace ECommerceMVC.Application.Dtos.Orders;
+﻿namespace ECommerceMVC.Application.Dtos.Orders;
 
 public class CreateOrderDto
 {
@@ -19,5 +17,4 @@ public class CreateOrderDto
     public string PhoneNumber { get; set; } = string.Empty;
 
     public string UserId { get; set; }
-
 }

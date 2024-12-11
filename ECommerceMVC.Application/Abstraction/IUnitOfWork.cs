@@ -5,5 +5,4 @@ namespace ECommerceMVC.Application.Abstraction;
 public interface IUnitOfWork
 {
     Task<IDbTransaction> BeginTransactionAsync();
-
 }

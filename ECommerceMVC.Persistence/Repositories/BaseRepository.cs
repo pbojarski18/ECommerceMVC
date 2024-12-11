@@ -1,9 +1,7 @@
 ﻿using ECommerceMVC.Domain.Repositories;
 using ECommerceMVC.Persistence.Context;
-using Microsoft.EntityFrameworkCore;
 
 namespace ECommerceMVC.Persistence.Repositories;
-
 
 public class BaseRepository(ApplicationDbContext _applicationDbContext) : IBaseRepository
 {
@@ -22,7 +20,6 @@ public class BaseRepository(ApplicationDbContext _applicationDbContext) : IBaseR
     public IQueryable<TEntity> GetAll<TEntity>() where TEntity : class
         => _applicationDbContext.Set<TEntity>();
 
-    
     public async Task<int> SaveAsync(CancellationToken ct = default)
         => await _applicationDbContext.SaveChangesAsync(ct);
 
@@ -38,7 +35,7 @@ public class BaseRepository(ApplicationDbContext _applicationDbContext) : IBaseR
         _applicationDbContext.AddRange(entity);
     }
 
-    public void UpdateRange<TEntity>(IEnumerable<TEntity> entity) where TEntity: class
+    public void UpdateRange<TEntity>(IEnumerable<TEntity> entity) where TEntity : class
     {
         _applicationDbContext.UpdateRange(entity);
     }

@@ -20,6 +20,4 @@ public static class DependencyRegistration
         services.AddScoped<IBasketService, BasketService>();
         return services;
     }
-
-
 }

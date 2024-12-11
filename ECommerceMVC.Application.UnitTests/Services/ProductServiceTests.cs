@@ -3,7 +3,6 @@ using ECommerceMVC.Application.Dtos.Products;
 using ECommerceMVC.Application.Services;
 using ECommerceMVC.Application.UnitTests.MapperProfiles;
 using ECommerceMVC.Domain.Entities;
-using ECommerceMVC.Domain.Enums;
 using ECommerceMVC.Domain.Repositories;
 using FluentAssertions;
 using Moq;
@@ -20,14 +19,16 @@ public class ProductServiceTests : IClassFixture<MappingTestFixture>
     private readonly Mock<IStockHistoryRepository> stockHistoryRepositoryMock = new Mock<IStockHistoryRepository>();
     private readonly Mock<IProductDetailsRepository> productDetailsRepositoryMock = new Mock<IProductDetailsRepository>();
     private readonly Mock<Abstraction.IUnitOfWork> unitOfWorkMock = new Mock<Abstraction.IUnitOfWork>();
+
     public ProductServiceTests(MappingTestFixture fixture)
     {
         mapper = fixture.mapper;
     }
+
     [Fact]
     public async Task GetAllByFiltersAsync_ShouldReturnMappedProducts()
     {
-        //Arrange//        
+        //Arrange//
         var products = new List<ProductEntity>()
         {
             new ProductEntity
@@ -40,12 +41,16 @@ public class ProductServiceTests : IClassFixture<MappingTestFixture>
                 Brand = "Head",
                 ProductSubcategoryId = 1
             }
-
         };
         productRepositoryMock.Setup(x => x.GetAllByFiltersAsync(It.IsAny<CancellationToken>())).ReturnsAsync(products);
 
-
-        var productService = new ProductService(productRepositoryMock.Object, mapper, productCategoryRepositoryMock.Object, stockRepositoryMock.Object, stockHistoryRepositoryMock.Object, unitOfWorkMock.Object, productDetailsRepositoryMock.Object);
+        var productService = new ProductService(productRepositoryMock.Object,
+                                                mapper,
+                                                productCategoryRepositoryMock.Object,
+                                                stockRepositoryMock.Object,
+                                                stockHistoryRepositoryMock.Object,
+                                                unitOfWorkMock.Object,
+                                                productDetailsRepositoryMock.Object);
 
         //Act//
         var result = await productService.GetAllByFiltersAsync(default);
@@ -60,7 +65,6 @@ public class ProductServiceTests : IClassFixture<MappingTestFixture>
     }
 
     [Fact]
-
     public async Task GetPagedByUserFiltersAsync_ShouldReturnMappedProducts()
     {
         //Arrange
@@ -80,11 +84,16 @@ public class ProductServiceTests : IClassFixture<MappingTestFixture>
 
         var filters = new GetPagedByFiltersTransferDto
         {
-
         };
         productRepositoryMock.Setup(x => x.GetPagedByUserFiltersAsync(It.IsAny<GetPagedByFiltersTransferDto>(), It.IsAny<CancellationToken>())).ReturnsAsync(products);
 
-        var productService = new ProductService(productRepositoryMock.Object, mapper, productCategoryRepositoryMock.Object, stockRepositoryMock.Object, stockHistoryRepositoryMock.Object, unitOfWorkMock.Object, productDetailsRepositoryMock.Object);
+        var productService = new ProductService(productRepositoryMock.Object,
+                                                mapper,
+                                                productCategoryRepositoryMock.Object,
+                                                stockRepositoryMock.Object,
+                                                stockHistoryRepositoryMock.Object,
+                                                unitOfWorkMock.Object,
+                                                productDetailsRepositoryMock.Object);
 
         //Act//
         var result = await productService.GetPagedByUserFiltersAsync(filters, default);
@@ -99,7 +108,6 @@ public class ProductServiceTests : IClassFixture<MappingTestFixture>
     }
 
     [Fact]
-
     public async Task AddAsync_ShouldAddProduct()
     {
         //Arrange
@@ -114,7 +122,6 @@ public class ProductServiceTests : IClassFixture<MappingTestFixture>
             ProductSubcategoryId = 1
         };
 
-
         var transactionMock = new Mock<IDbTransaction>();
 
         unitOfWorkMock.Setup(x => x.BeginTransactionAsync()).ReturnsAsync(transactionMock.Object);
@@ -124,14 +131,19 @@ public class ProductServiceTests : IClassFixture<MappingTestFixture>
         stockHistoryRepositoryMock.Setup(x => x.AddAsync(It.IsAny<StockHistoryEntity>(), It.IsAny<CancellationToken>()));
         transactionMock.Setup(x => x.Commit());
 
-        var productService = new ProductService(productRepositoryMock.Object, mapper, productCategoryRepositoryMock.Object, stockRepositoryMock.Object, stockHistoryRepositoryMock.Object, unitOfWorkMock.Object, productDetailsRepositoryMock.Object);
+        var productService = new ProductService(productRepositoryMock.Object,
+                                                mapper,
+                                                productCategoryRepositoryMock.Object,
+                                                stockRepositoryMock.Object,
+                                                stockHistoryRepositoryMock.Object,
+                                                unitOfWorkMock.Object,
+                                                productDetailsRepositoryMock.Object);
 
         //Act
         var result = await productService.AddAsync(product, default);
 
         //Assert//
         transactionMock.Verify(x => x.Commit(), Times.Once);
-
     }
 
     [Fact]
@@ -157,7 +169,13 @@ public class ProductServiceTests : IClassFixture<MappingTestFixture>
         productDetailsRepositoryMock.Setup(x => x.EditRangeAsync(It.IsAny<IEnumerable<ProductDetailsEntity>>(), It.IsAny<CancellationToken>()));
         transactionMock.Setup(x => x.Commit());
 
-        var productService = new ProductService(productRepositoryMock.Object, mapper, productCategoryRepositoryMock.Object, stockRepositoryMock.Object, stockHistoryRepositoryMock.Object, unitOfWorkMock.Object, productDetailsRepositoryMock.Object);
+        var productService = new ProductService(productRepositoryMock.Object,
+                                                mapper,
+                                                productCategoryRepositoryMock.Object,
+                                                stockRepositoryMock.Object,
+                                                stockHistoryRepositoryMock.Object,
+                                                unitOfWorkMock.Object,
+                                                productDetailsRepositoryMock.Object);
 
         //Act
         var result = await productService.EditAsync(product, default);
@@ -182,7 +200,13 @@ public class ProductServiceTests : IClassFixture<MappingTestFixture>
 
         productRepositoryMock.Setup(x => x.GetByIdAsync(It.IsAny<int>(), It.IsAny<CancellationToken>())).ReturnsAsync(product);
 
-        var productService = new ProductService(productRepositoryMock.Object, mapper, productCategoryRepositoryMock.Object, stockRepositoryMock.Object, stockHistoryRepositoryMock.Object, unitOfWorkMock.Object, productDetailsRepositoryMock.Object);
+        var productService = new ProductService(productRepositoryMock.Object,
+                                                mapper,
+                                                productCategoryRepositoryMock.Object,
+                                                stockRepositoryMock.Object,
+                                                stockHistoryRepositoryMock.Object,
+                                                unitOfWorkMock.Object,
+                                                productDetailsRepositoryMock.Object);
 
         //Act
         var result = await productService.GetByIdAsync(1, default);
@@ -196,11 +220,9 @@ public class ProductServiceTests : IClassFixture<MappingTestFixture>
         result.ImagePath.Should().Be("url");
         result.Brand.Should().Be("Head");
         result.ProductSubcategoryId.Should().Be(1);
-
     }
 
     [Fact]
-
     public async Task GetAllCategoriesAsync_ShouldReturnMappedCategories()
     {
         //Arrange
@@ -215,7 +237,13 @@ public class ProductServiceTests : IClassFixture<MappingTestFixture>
 
         productCategoryRepositoryMock.Setup(x => x.GetAllAsync(It.IsAny<CancellationToken>())).ReturnsAsync(categories);
 
-        var productService = new ProductService(productRepositoryMock.Object, mapper, productCategoryRepositoryMock.Object, stockRepositoryMock.Object, stockHistoryRepositoryMock.Object, unitOfWorkMock.Object, productDetailsRepositoryMock.Object);
+        var productService = new ProductService(productRepositoryMock.Object,
+                                                mapper,
+                                                productCategoryRepositoryMock.Object,
+                                                stockRepositoryMock.Object,
+                                                stockHistoryRepositoryMock.Object,
+                                                unitOfWorkMock.Object,
+                                                productDetailsRepositoryMock.Object);
 
         //Act//
         var result = await productService.GetAllCategoriesAsync(default);
@@ -225,5 +253,3 @@ public class ProductServiceTests : IClassFixture<MappingTestFixture>
         result.First().Name.Should().Be("Rackets");
     }
 }
-
-

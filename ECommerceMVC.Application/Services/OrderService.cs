@@ -39,10 +39,8 @@ public class OrderService(IOrderRepository _orderRepository,
             {
                 ProductOrderEntity productOrderEntity = new ProductOrderEntity() { ProductId = userBasket.ProductId, ProductQuantity = userBasket.ProductQuantity, OrderId = orderEntity.Id, CreateTimeUtc = DateTimeOffset.UtcNow };
                 productOrderEntities.Add(productOrderEntity);
-
             }
             await _productOrderRepository.AddRangeAsync(productOrderEntities, ct);
-
 
             var stocks = await _stockRepository.GetByProductsIdsAsync(productOrderEntities.Select(p => p.ProductId).Distinct(), ct);
             var stockHistories = new List<StockHistoryEntity>();
@@ -56,7 +54,6 @@ public class OrderService(IOrderRepository _orderRepository,
             await _stockHistoryRepository.AddRangeAsync(stockHistories, ct);
             await _basketRepository.DeactivateUserBasketsAsync(createOrderDto.UserId, ct);
 
-
             transaction.Commit();
             return orderEntity.Id;
         }
@@ -65,6 +62,5 @@ public class OrderService(IOrderRepository _orderRepository,
             transaction.Rollback();
             throw new Exception(ex.Message);
         }
-
     }
 }

@@ -9,5 +9,4 @@ public class BasketDto
 
     public int ProductQuantity { get; set; }
     public double TotalCost { get; set; }
-
 }

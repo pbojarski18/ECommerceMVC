@@ -1,7 +1,4 @@
-﻿using ECommerceMVC.Domain.Enums;
-using System.Runtime.CompilerServices;
-
-namespace ECommerceMVC.Application.Dtos.Products;
+﻿namespace ECommerceMVC.Application.Dtos.Products;
 
 public class GetPagedByFiltersTransferDto
 {
@@ -11,12 +8,11 @@ public class GetPagedByFiltersTransferDto
 
     public double MinPrice { get; set; }
 
-    public double MaxPrice { get; set; }  
+    public double MaxPrice { get; set; }
 
     public int CurrentPage { get; set; }
 
     public int PageSize { get; set; }
 
-    public int ProductSubcategoryId {  get; set; }
-
+    public int ProductSubcategoryId { get; set; }
 }

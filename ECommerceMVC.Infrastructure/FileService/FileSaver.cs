@@ -1,13 +1,9 @@
-﻿using ECommerceMVC.Infrastructure.Helpers;
-using Microsoft.AspNetCore.Http;
-using System;
+﻿using Microsoft.AspNetCore.Http;
 
 namespace ECommerceMVC.Infrastructure.FileService;
 
 public class FileSaver : IFileSaver
 {
-
-
     public async Task<string> SaveFile(IFormFile file)
     {
         if (file != null && file.Length > 0)

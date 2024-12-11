@@ -1,6 +1,5 @@
 ﻿using ECommerceMVC.Application.Dtos.Products;
 using ECommerceMVC.Domain.Entities;
-using ECommerceMVC.Domain.Enums;
 using ECommerceMVC.Domain.Repositories;
 using Microsoft.EntityFrameworkCore;
 
@@ -16,7 +15,6 @@ public class ProductRepository(IBaseRepository _baseRepository) : IProductReposi
                                             .ToListAsync(ct);
 
         return products;
-
     }
 
     public async Task<IEnumerable<ProductEntity>> GetPagedByUserFiltersAsync(GetPagedByFiltersTransferDto filters, CancellationToken ct)
@@ -42,8 +40,8 @@ public class ProductRepository(IBaseRepository _baseRepository) : IProductReposi
 
         return await query.Include(p => p.Stock)
                           .ToListAsync(ct);
-
     }
+
     public async Task<int> AddAsync(ProductEntity product, CancellationToken ct)
     {
         await _baseRepository.AddAsync<ProductEntity>(product, ct);
@@ -93,4 +91,3 @@ public class ProductRepository(IBaseRepository _baseRepository) : IProductReposi
         }
     }
 }
-

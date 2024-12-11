@@ -1,8 +1,6 @@
 ﻿using AutoMapper;
 using ECommerceMVC.Application.Dtos.Products;
 using ECommerceMVC.Domain.Entities;
-using Microsoft.AspNetCore.Routing.Constraints;
-using Microsoft.Extensions.ObjectPool;
 
 namespace ECommerceMVC.Application.MapperProfiles.Products;
 
@@ -57,6 +55,5 @@ public class ProductProfile : Profile
            .ForMember(dest => dest.IsMain, opt => opt.MapFrom(src => src.IsMain))
            .ForMember(dest => dest.Value, opt => opt.MapFrom(src => src.Value))
            .ForMember(dest => dest.Key, opt => opt.MapFrom(src => src.Key));
-
     }
 }

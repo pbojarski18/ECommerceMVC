@@ -23,7 +23,6 @@ public class CreateOrderDtoValidator : AbstractValidator<CreateOrderDto>
             .NotEmpty().WithMessage("Number can't be empty");
         RuleFor(p => p.PostalCode).Must(PostalCodeFormat).WithMessage("Postal code must be in format 11-111")
             .NotEmpty().WithMessage("Postal code can't be empty");
-
     }
 
     private bool PostalCodeFormat(string postalCode)

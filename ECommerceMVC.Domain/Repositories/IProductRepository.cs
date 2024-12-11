@@ -1,6 +1,5 @@
 ﻿using ECommerceMVC.Application.Dtos.Products;
 using ECommerceMVC.Domain.Entities;
-using ECommerceMVC.Domain.Enums;
 
 namespace ECommerceMVC.Domain.Repositories;
 

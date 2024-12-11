@@ -7,6 +7,7 @@ namespace ECommerceMVC.Persistence.Repositories;
 public class ProductDetailsRepository(IBaseRepository _baseRepository) : IProductDetailsRepository
 {
     private readonly IBaseRepository _baseRepository = _baseRepository;
+
     public async Task<bool> AddRangeAsync(IEnumerable<ProductDetailsEntity> productDetails, CancellationToken ct)
     {
         _baseRepository.AddRange<ProductDetailsEntity>(productDetails);

@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using ECommerceMVC.Application.Dtos.Baskets;
-using ECommerceMVC.Application.Dtos.Products;
 using ECommerceMVC.Application.Interfaces;
 using ECommerceMVC.Domain.Entities;
 using ECommerceMVC.Domain.Repositories;
@@ -29,9 +28,9 @@ public class BasketService(IBasketRepository _basketRepository,
         return MergeBaskets(basketDtos);
     }
 
-    public async Task<bool> RemoveAsync (string userId, int productId, CancellationToken ct)
+    public async Task<bool> RemoveAsync(string userId, int productId, CancellationToken ct)
     {
-        return await _basketRepository.DeactivateByProductIdAsync(userId ,productId, ct);
+        return await _basketRepository.DeactivateByProductIdAsync(userId, productId, ct);
     }
 
     private IEnumerable<BasketDto> MergeBaskets(IEnumerable<BasketDto> baskets)
@@ -53,6 +52,5 @@ public class BasketService(IBasketRepository _basketRepository,
         }
 
         return mergedBaskets;
-
     }
 }

@@ -4,7 +4,6 @@ using ECommerceMVC.Application.Dtos.Categories;
 using ECommerceMVC.Application.Dtos.Products;
 using ECommerceMVC.Application.Interfaces;
 using ECommerceMVC.Domain.Entities;
-using ECommerceMVC.Domain.Enums;
 using ECommerceMVC.Domain.Repositories;
 
 namespace ECommerceMVC.Application.Services;
@@ -25,14 +24,12 @@ public class ProductService(IProductRepository _productRepository,
     private readonly IUnitOfWork _unitOfWork = _unitOfWork;
     private readonly IProductDetailsRepository _productDetailsRepository = _productDetailsRepository;
 
-
     public async Task<IEnumerable<ProductDto>> GetAllByFiltersAsync(CancellationToken ct)
     {
         var productEntities = await _productRepository.GetAllByFiltersAsync(ct);
         var productDtos = _mapper.Map<IEnumerable<ProductDto>>(productEntities);
 
         return productDtos;
-
     }
 
     public async Task<IEnumerable<ProductDto>> GetPagedByUserFiltersAsync(GetPagedByFiltersTransferDto filters, CancellationToken ct)
@@ -102,9 +99,7 @@ public class ProductService(IProductRepository _productRepository,
             transaction.Rollback();
             throw new Exception(ex.Message);
         }
-
     }
-
 
     public async Task<ProductDto> GetByIdAsync(int productId, CancellationToken ct)
     {
@@ -112,7 +107,6 @@ public class ProductService(IProductRepository _productRepository,
         var productDto = _mapper.Map<ProductDto>(product);
 
         return productDto;
-
     }
 
     public async Task<IEnumerable<ProductCategoryDto>> GetAllCategoriesAsync(CancellationToken ct)
@@ -127,5 +121,4 @@ public class ProductService(IProductRepository _productRepository,
     {
         return await _productDetailsRepository.RemoveAsync(productDetailId, ct);
     }
-
 }
