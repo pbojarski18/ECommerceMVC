@@ -16,14 +16,6 @@ public class ProductService(IProductRepository _productRepository,
                             IUnitOfWork _unitOfWork,
                             IProductDetailsRepository _productDetailsRepository) : IProductService
 {
-    private readonly IProductRepository _productRepository = _productRepository;
-    private readonly IMapper _mapper = _mapper;
-    private readonly IProductCategoryRepository _productCategoryRepository = _productCategoryRepository;
-    private readonly IStockRepository _stockRepository = _stockRepository;
-    private readonly IStockHistoryRepository stockHistoryRepository = _stockHistoryRepository;
-    private readonly IUnitOfWork _unitOfWork = _unitOfWork;
-    private readonly IProductDetailsRepository _productDetailsRepository = _productDetailsRepository;
-
     public async Task<IEnumerable<ProductDto>> GetAllByFiltersAsync(CancellationToken ct)
     {
         var productEntities = await _productRepository.GetAllByFiltersAsync(ct);
@@ -71,12 +63,12 @@ public class ProductService(IProductRepository _productRepository,
         }
     }
 
-    public async Task<bool> RemoveAsync(int productId, CancellationToken ct)
+    public async Task RemoveAsync(int productId, CancellationToken ct)
     {
-        return await _productRepository.RemoveAsync(productId, ct);
+        await _productRepository.RemoveAsync(productId, ct);
     }
 
-    public async Task<bool> EditAsync(EditProductDto editProductDto, CancellationToken ct)
+    public async Task EditAsync(EditProductDto editProductDto, CancellationToken ct)
     {
         using var transaction = await _unitOfWork.BeginTransactionAsync();
         try
@@ -92,7 +84,6 @@ public class ProductService(IProductRepository _productRepository,
             await _productDetailsRepository.EditRangeAsync(productDetailsEntity, ct);
 
             transaction.Commit();
-            return true;
         }
         catch (Exception ex)
         {
@@ -117,8 +108,8 @@ public class ProductService(IProductRepository _productRepository,
         return productCategoriesDto;
     }
 
-    public async Task<bool> RemoveDetailAsync(int productDetailId, CancellationToken ct)
+    public async Task RemoveDetailAsync(int productDetailId, CancellationToken ct)
     {
-        return await _productDetailsRepository.RemoveAsync(productDetailId, ct);
+        await _productDetailsRepository.RemoveAsync(productDetailId, ct);
     }
 }

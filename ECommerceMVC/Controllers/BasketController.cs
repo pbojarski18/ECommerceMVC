@@ -1,5 +1,6 @@
 ﻿using ECommerceMVC.Application.Dtos.Baskets;
 using ECommerceMVC.Application.Interfaces;
+using ECommerceMVC.Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -8,11 +9,8 @@ namespace ECommerceMVC.Controllers;
 
 [Authorize]
 public class BasketController(IBasketService _basketService,
-                              UserManager<IdentityUser> _userManager) : Controller
+                              UserManager<ApplicationUser> _userManager) : Controller
 {
-    private readonly IBasketService _basketService = _basketService;
-    private readonly UserManager<IdentityUser> _userManager = _userManager;
-
     [HttpPost]
     public async Task<IActionResult> AddBasket(int productId, double totalCost, int productQuantity)
     {

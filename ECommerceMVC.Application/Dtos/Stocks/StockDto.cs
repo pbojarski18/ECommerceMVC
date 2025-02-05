@@ -6,5 +6,5 @@ public class StockDto
 
     public int Id { get; set; }
 
-    public IEnumerable<StockHistoryDto> StockHistories { get; set; } = Enumerable.Empty<StockHistoryDto>();
+    public IEnumerable<StockHistoryDto> StockHistories { get; set; } = [];
 }

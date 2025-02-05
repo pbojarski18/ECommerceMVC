@@ -6,8 +6,6 @@ namespace ECommerceMVC.Persistence.Repositories;
 
 public class BasketRepository(IBaseRepository _baseRepository) : IBasketRepository
 {
-    private readonly IBaseRepository _baseRepository = _baseRepository;
-
     public async Task<int> AddAsync(BasketEntity basket, CancellationToken ct)
     {
         await _baseRepository.AddAsync(basket, ct);
@@ -16,7 +14,7 @@ public class BasketRepository(IBaseRepository _baseRepository) : IBasketReposito
         return basket.Id;
     }
 
-    public async Task<bool> DeactivateByProductIdAsync(string userId, int productId, CancellationToken ct)
+    public async Task DeactivateByProductIdAsync(string userId, int productId, CancellationToken ct)
     {
         var baskets = await _baseRepository.GetAll<BasketEntity>()
                                            .Include(p => p.Product)
@@ -30,7 +28,6 @@ public class BasketRepository(IBaseRepository _baseRepository) : IBasketReposito
             _baseRepository.Update(basket);
         }
         await _baseRepository.SaveAsync(ct);
-        return true;
     }
 
     public async Task<IEnumerable<BasketEntity>> GetAllActiveAsync(string userId, CancellationToken ct)
@@ -41,7 +38,7 @@ public class BasketRepository(IBaseRepository _baseRepository) : IBasketReposito
                                     .ToListAsync(ct);
     }
 
-    public async Task<bool> DeactivateUserBasketsAsync(string userId, CancellationToken ct)
+    public async Task DeactivateUserBasketsAsync(string userId, CancellationToken ct)
     {
         var baskets = await _baseRepository.GetAll<BasketEntity>()
                                            .Include(p => p.Product)
@@ -54,6 +51,5 @@ public class BasketRepository(IBaseRepository _baseRepository) : IBasketReposito
             _baseRepository.Update(basket);
         }
         await _baseRepository.SaveAsync(ct);
-        return true;
     }
 }

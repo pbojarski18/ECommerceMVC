@@ -37,20 +37,16 @@ public class StockRepository(IBaseRepository _baseRepository) : IStockRepository
         }
     }
 
-    public async Task<bool> UpdateAsync(StockEntity stock, CancellationToken ct)
+    public async Task UpdateAsync(StockEntity stock, CancellationToken ct)
     {
         _baseRepository.Update<StockEntity>(stock);
         await _baseRepository.SaveAsync(ct);
-
-        return true;
     }
 
-    public async Task<bool> UpdateRangeAsync(IEnumerable<StockEntity> stocks, CancellationToken ct)
+    public async Task UpdateRangeAsync(IEnumerable<StockEntity> stocks, CancellationToken ct)
     {
         _baseRepository.UpdateRange(stocks);
         await _baseRepository.SaveAsync(ct);
-
-        return true;
     }
 
     public async Task<StockEntity> GetByIdAsync(int stockId, CancellationToken ct)

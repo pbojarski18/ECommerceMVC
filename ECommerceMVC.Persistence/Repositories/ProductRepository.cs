@@ -7,8 +7,6 @@ namespace ECommerceMVC.Persistence.Repositories;
 
 public class ProductRepository(IBaseRepository _baseRepository) : IProductRepository
 {
-    private readonly IBaseRepository _baseRepository = _baseRepository;
-
     public async Task<IEnumerable<ProductEntity>> GetAllByFiltersAsync(CancellationToken ct)
     {
         var products = await _baseRepository.GetAll<ProductEntity>()
@@ -34,12 +32,13 @@ public class ProductRepository(IBaseRepository _baseRepository) : IProductReposi
             query = query.Where(p => p.Price <= filters.MaxPrice);
         }
 
-        query = query.OrderBy(p => p.Price)
+        filters.TotalCount = await query.CountAsync(ct);
+
+        var pagedQuery = query.OrderBy(p => p.Price)
             .Skip(filters.CurrentPage * filters.PageSize - filters.PageSize)
             .Take(filters.PageSize);
 
-        return await query.Include(p => p.Stock)
-                          .ToListAsync(ct);
+        return await pagedQuery.ToListAsync(ct);
     }
 
     public async Task<int> AddAsync(ProductEntity product, CancellationToken ct)
@@ -50,28 +49,24 @@ public class ProductRepository(IBaseRepository _baseRepository) : IProductReposi
         return product.Id;
     }
 
-    public async Task<bool> RemoveAsync(int productId, CancellationToken ct)
+    public async Task RemoveAsync(int productId, CancellationToken ct)
     {
         var product = await _baseRepository.GetAll<ProductEntity>()
             .FirstOrDefaultAsync(p => p.Id == productId, ct);
 
         if (product == null)
         {
-            return false;
+            throw new Exception("Product not found");
         }
 
         _baseRepository.Delete(product);
         await _baseRepository.SaveAsync(ct);
-
-        return true;
     }
 
-    public async Task<bool> EditAsync(ProductEntity product, CancellationToken ct)
+    public async Task EditAsync(ProductEntity product, CancellationToken ct)
     {
         _baseRepository.Update<ProductEntity>(product);
         await _baseRepository.SaveAsync(ct);
-
-        return true;
     }
 
     public async Task<ProductEntity> GetByIdAsync(int productId, CancellationToken ct)

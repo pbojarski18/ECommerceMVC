@@ -178,7 +178,7 @@ public class ProductServiceTests : IClassFixture<MappingTestFixture>
                                                 productDetailsRepositoryMock.Object);
 
         //Act
-        var result = await productService.EditAsync(product, default);
+        await productService.EditAsync(product, default);
 
         //Assert//
         transactionMock.Verify(x => x.Commit(), Times.Once);

@@ -12,10 +12,6 @@ public class ProductController(IProductService _productService,
                                AddProductDtoValidator _productDtoValidator,
                                IFileSaver _fileSaver) : Controller
 {
-    private readonly IProductService _productService = _productService;
-    private readonly AddProductDtoValidator _productDtoValidator = _productDtoValidator;
-    private readonly IFileSaver _fileSaver = _fileSaver;
-
     [HttpGet("admin-products")]
     public async Task<IActionResult> Index()
     {
@@ -46,9 +42,31 @@ public class ProductController(IProductService _productService,
     public async Task<IActionResult> CustomerProduct(int Id)
     {
         var model = new CustomerProductViewModel();
-        model.GetPagedByFiltersTransferDto = new GetPagedByFiltersTransferDto() { ProductSubcategoryId = Id, CurrentPage = 1, PageSize = 20 };
+        model.GetPagedByFiltersTransferDto = new GetPagedByFiltersTransferDto()
+        {
+            ProductSubcategoryId = Id,
+            CurrentPage = 1,
+            PageSize = 20
+        };
         model.ProductCategories = await _productService.GetAllCategoriesAsync(default);
         model.Products = await _productService.GetPagedByUserFiltersAsync(model.GetPagedByFiltersTransferDto, default);
+        model.TotalCount = model.GetPagedByFiltersTransferDto.TotalCount;
+        return View(model);
+    }
+
+    [HttpGet("pagination")]
+    public async Task<IActionResult> CustomerProduct(int Id, int CurrentPage, int PageSize)
+    {
+        var model = new CustomerProductViewModel();
+        model.GetPagedByFiltersTransferDto = new GetPagedByFiltersTransferDto()
+        {
+            ProductSubcategoryId = Id,
+            CurrentPage = CurrentPage,
+            PageSize = PageSize
+        };
+        model.ProductCategories = await _productService.GetAllCategoriesAsync(default);
+        model.Products = await _productService.GetPagedByUserFiltersAsync(model.GetPagedByFiltersTransferDto, default);
+        model.TotalCount = model.GetPagedByFiltersTransferDto.TotalCount;
         return View(model);
     }
 
@@ -72,16 +90,20 @@ public class ProductController(IProductService _productService,
     [HttpPost("AddProduct")]
     public async Task<IActionResult> AddProduct(AddProductDto addProductDto, IFormFile file)
     {
-        // Sprawdź, czy plik został przesłany
         if (file == null || file.Length == 0)
         {
+            var category = await _productService.GetAllCategoriesAsync(default);
+            var model = new AddProductViewModel()
+            {
+                Categories = category,
+                AddProductDto = addProductDto
+            };
             ModelState.AddModelError("File", "No file uploaded.");
-            return View(addProductDto);
+            return View(model);
         }
 
         var filePath = await _fileSaver.SaveFile(file);
 
-        // Przypisz ścieżkę obrazu do produktu
         addProductDto.ImagePath = filePath;
 
         var result = await _productDtoValidator.ValidateAsync(addProductDto);
@@ -89,7 +111,7 @@ public class ProductController(IProductService _productService,
         {
             return View(addProductDto);
         }
-        // Dodaj produkt do bazy danych
+
         await _productService.AddAsync(addProductDto, default);
 
         return RedirectToAction(nameof(Index));
@@ -98,7 +120,7 @@ public class ProductController(IProductService _productService,
     [HttpPost("RemoveProduct")]
     public async Task<IActionResult> RemoveProduct(int productId)
     {
-        var model = await _productService.RemoveAsync(productId, default);
+        await _productService.RemoveAsync(productId, default);
 
         return RedirectToAction(nameof(Index));
     }
@@ -117,9 +139,6 @@ public class ProductController(IProductService _productService,
     [HttpPost("EditProduct")]
     public async Task<IActionResult> EditProduct(EditProductDto editProductDto, IFormFile file)
     {
-        //var result = await _productDtoValidator.ValidateAsync(editProductDto);
-        //if (result.IsValid)
-        //{
         if ((file == null || file.Length == 0) && string.IsNullOrEmpty(editProductDto.ImagePath))
         {
             ModelState.AddModelError("File", "No file uploaded.");
@@ -128,15 +147,12 @@ public class ProductController(IProductService _productService,
         if (file != null)
         {
             var filePath = await _fileSaver.SaveFile(file);
-            // Przypisz ścieżkę obrazu do produktu
+
             editProductDto.ImagePath = filePath;
         }
 
-        var model = await _productService.EditAsync(editProductDto, default);
+        await _productService.EditAsync(editProductDto, default);
         return RedirectToAction(nameof(Index));
-        //}
-
-        //return View(editProductDto);
     }
 
     [HttpGet("ProductDetails")]
@@ -150,7 +166,7 @@ public class ProductController(IProductService _productService,
     [HttpPost("delete-by-id")]
     public async Task<IActionResult> DeleteProductDetail(int id)
     {
-        var model = await _productService.RemoveDetailAsync(id, default);
+        await _productService.RemoveDetailAsync(id, default);
 
         return NoContent();
     }

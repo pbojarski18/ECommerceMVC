@@ -1,5 +1,4 @@
 ﻿using ECommerceMVC.Domain.Entities.Common;
-using Microsoft.AspNetCore.Identity;
 
 namespace ECommerceMVC.Domain.Entities;
 
@@ -17,5 +16,5 @@ public class BasketEntity : AuditableEntity
 
     public virtual ProductEntity Product { get; set; }
 
-    public virtual IdentityUser User { get; set; }
+    public virtual ApplicationUser User { get; set; }
 }

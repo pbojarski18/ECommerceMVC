@@ -15,6 +15,7 @@ public class EditProductDto
     public string ImagePath { get; set; } = string.Empty;
 
     public int ProductSubcategoryId { get; set; }
+
     public List<ProductDetailsDto> Details { get; set; } = new List<ProductDetailsDto>();
 
     public EditProductDto()

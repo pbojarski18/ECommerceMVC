@@ -2,6 +2,8 @@
 
 public class GetPagedByFiltersTransferDto
 {
+    public int TotalCount { get; set; }
+
     public int MinWeight { get; set; }
 
     public int MaxWeight { get; set; }

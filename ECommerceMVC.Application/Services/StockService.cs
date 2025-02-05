@@ -12,11 +12,6 @@ public class StockService(IStockRepository _stockRepository,
                           IStockHistoryRepository _stockHistoryRepository,
                           IUnitOfWork _unitOfWork) : IStockService
 {
-    private readonly IStockRepository _stockRepository = _stockRepository;
-    private readonly IMapper _mapper = _mapper;
-    private readonly IStockHistoryRepository _stockHistoryRepository = _stockHistoryRepository;
-    private readonly IUnitOfWork _unitOfWork = _unitOfWork;
-
     public async Task<StockDto> GetByProductIdWithPagedHistoriesAsync(int productId, int currentPage, int pageSize, CancellationToken ct)
     {
         var stock = await _stockRepository.GetByProductIdWithPagedHistoriesAsync(productId, currentPage, pageSize, ct);
@@ -42,7 +37,14 @@ public class StockService(IStockRepository _stockRepository,
             {
                 message = $"Quantity has been decreased by {stockUpdateDto.ProductQuantity.ToString().Substring(1)}";
             }
-            var stockHistory = new StockHistoryEntity { ProductQuantity = stock.ProductQuantity, CreateTimeUtc = DateTime.UtcNow, ProductId = stock.ProductId, StockId = stock.Id, Message = message };
+            var stockHistory = new StockHistoryEntity
+            {
+                ProductQuantity = stock.ProductQuantity,
+                CreateTimeUtc = DateTime.UtcNow,
+                ProductId = stock.ProductId,
+                StockId = stock.Id,
+                Message = message
+            };
             await _stockHistoryRepository.AddAsync(stockHistory, ct);
 
             transaction.Commit();

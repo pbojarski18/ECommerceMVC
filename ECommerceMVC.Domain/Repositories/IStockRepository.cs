@@ -8,7 +8,7 @@ public interface IStockRepository
 
     Task<StockEntity> GetByProductIdWithPagedHistoriesAsync(int productId, int currentPage, int pageSize, CancellationToken ct);
 
-    Task<bool> UpdateAsync(StockEntity stock, CancellationToken ct);
+    Task UpdateAsync(StockEntity stock, CancellationToken ct);
 
     Task<StockEntity> GetByIdAsync(int stockId, CancellationToken ct);
 
@@ -16,5 +16,5 @@ public interface IStockRepository
 
     Task<IEnumerable<StockEntity>> GetByProductsIdsAsync(IEnumerable<int> productIds, CancellationToken ct);
 
-    Task<bool> UpdateRangeAsync(IEnumerable<StockEntity> stocks, CancellationToken ct);
+    Task UpdateRangeAsync(IEnumerable<StockEntity> stocks, CancellationToken ct);
 }

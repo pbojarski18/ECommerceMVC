@@ -15,11 +15,9 @@ public class ProductOrderRepository(IBaseRepository _baseRepository) : IProductO
         return productOrder.Id;
     }
 
-    public async Task<bool> AddRangeAsync(IEnumerable<ProductOrderEntity> productOrders, CancellationToken ct)
+    public async Task AddRangeAsync(IEnumerable<ProductOrderEntity> productOrders, CancellationToken ct)
     {
         _baseRepository.AddRange(productOrders);
         await _baseRepository.SaveAsync(ct);
-
-        return true;
     }
 }

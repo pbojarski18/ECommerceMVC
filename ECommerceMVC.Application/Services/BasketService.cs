@@ -9,9 +9,6 @@ namespace ECommerceMVC.Application.Services;
 public class BasketService(IBasketRepository _basketRepository,
                            IMapper _mapper) : IBasketService
 {
-    private readonly IBasketRepository _basketRepository = _basketRepository;
-    private readonly IMapper _mapper = _mapper;
-
     public async Task<int> AddAsync(AddBasketDto addBasketDto, CancellationToken ct)
     {
         var basketEntity = _mapper.Map<BasketEntity>(addBasketDto);
@@ -28,9 +25,9 @@ public class BasketService(IBasketRepository _basketRepository,
         return MergeBaskets(basketDtos);
     }
 
-    public async Task<bool> RemoveAsync(string userId, int productId, CancellationToken ct)
+    public async Task RemoveAsync(string userId, int productId, CancellationToken ct)
     {
-        return await _basketRepository.DeactivateByProductIdAsync(userId, productId, ct);
+        await _basketRepository.DeactivateByProductIdAsync(userId, productId, ct);
     }
 
     private IEnumerable<BasketDto> MergeBaskets(IEnumerable<BasketDto> baskets)

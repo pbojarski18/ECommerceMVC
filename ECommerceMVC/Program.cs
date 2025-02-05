@@ -1,5 +1,6 @@
 using ECommerceMVC.Application.Abstraction;
 using ECommerceMVC.Application.Extensions;
+using ECommerceMVC.Domain.Entities;
 using ECommerceMVC.Domain.Repositories;
 using ECommerceMVC.Infrastructure.FileService;
 using ECommerceMVC.Persistence.Context;
@@ -13,7 +14,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnectionString")));
 
-builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 {
     options.SignIn.RequireConfirmedAccount = false;
     options.SignIn.RequireConfirmedEmail = false;
@@ -29,6 +30,7 @@ builder.Services.AddScoped<IProductOrderRepository, ProductOrderRepository>();
 builder.Services.AddScoped<IBasketRepository, BasketRepository>();
 builder.Services.AddScoped<IUnitOfWork, ApplicationDbContext>();
 builder.Services.AddScoped<IProductDetailsRepository, ProductDetailsRepository>();
+builder.Services.AddScoped<IAddressRepository, AddressRepository>();
 builder.Services.AddApplicationDi();
 builder.Services.AddRazorPages();
 var app = builder.Build();

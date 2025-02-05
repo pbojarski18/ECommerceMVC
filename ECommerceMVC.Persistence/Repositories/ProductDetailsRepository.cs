@@ -8,35 +8,29 @@ public class ProductDetailsRepository(IBaseRepository _baseRepository) : IProduc
 {
     private readonly IBaseRepository _baseRepository = _baseRepository;
 
-    public async Task<bool> AddRangeAsync(IEnumerable<ProductDetailsEntity> productDetails, CancellationToken ct)
+    public async Task AddRangeAsync(IEnumerable<ProductDetailsEntity> productDetails, CancellationToken ct)
     {
         _baseRepository.AddRange<ProductDetailsEntity>(productDetails);
         await _baseRepository.SaveAsync(ct);
-
-        return true;
     }
 
-    public async Task<bool> RemoveAsync(int productDetailId, CancellationToken ct)
+    public async Task RemoveAsync(int productDetailId, CancellationToken ct)
     {
         var productDetail = await _baseRepository.GetAll<ProductDetailsEntity>()
                     .FirstOrDefaultAsync(p => p.Id == productDetailId, ct);
 
         if (productDetail == null)
         {
-            return false;
+            throw new Exception("Product detail not found");
         }
 
         _baseRepository.Delete(productDetail);
         await _baseRepository.SaveAsync(ct);
-
-        return true;
     }
 
-    public async Task<bool> EditRangeAsync(IEnumerable<ProductDetailsEntity> productDetails, CancellationToken ct)
+    public async Task EditRangeAsync(IEnumerable<ProductDetailsEntity> productDetails, CancellationToken ct)
     {
         _baseRepository.UpdateRange<ProductDetailsEntity>(productDetails);
         await _baseRepository.SaveAsync(ct);
-
-        return true;
     }
 }

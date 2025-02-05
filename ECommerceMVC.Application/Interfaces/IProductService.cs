@@ -9,9 +9,9 @@ public interface IProductService
 
     Task<int> AddAsync(AddProductDto addProductDto, CancellationToken ct);
 
-    Task<bool> RemoveAsync(int productId, CancellationToken ct);
+    Task RemoveAsync(int productId, CancellationToken ct);
 
-    Task<bool> EditAsync(EditProductDto editProductDto, CancellationToken ct);
+    Task EditAsync(EditProductDto editProductDto, CancellationToken ct);
 
     Task<ProductDto> GetByIdAsync(int productId, CancellationToken ct);
 
@@ -19,5 +19,5 @@ public interface IProductService
 
     Task<IEnumerable<ProductCategoryDto>> GetAllCategoriesAsync(CancellationToken ct);
 
-    Task<bool> RemoveDetailAsync(int productDetailId, CancellationToken ct);
+    Task RemoveDetailAsync(int productDetailId, CancellationToken ct);
 }

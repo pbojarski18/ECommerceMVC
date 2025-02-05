@@ -1,7 +1,6 @@
 ﻿using ECommerceMVC.Application.Abstraction;
 using ECommerceMVC.Domain.Entities;
 using ECommerceMVC.Persistence.Seed;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
@@ -9,7 +8,7 @@ using System.Data;
 
 namespace ECommerceMVC.Persistence.Context;
 
-public class ApplicationDbContext : IdentityDbContext<IdentityUser>, IUnitOfWork
+public class ApplicationDbContext : IdentityDbContext<ApplicationUser>, IUnitOfWork
 {
     public DbSet<ProductEntity> Products { get; set; }
 
@@ -28,6 +27,8 @@ public class ApplicationDbContext : IdentityDbContext<IdentityUser>, IUnitOfWork
     public DbSet<ProductDetailsEntity> ProductDetails { get; set; }
 
     public DbSet<ProductSubcategoryEntity> ProductSubcategories { get; set; }
+
+    public DbSet<AddressEntity> Addresses { get; set; }
 
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
     {
@@ -86,33 +87,42 @@ public class ApplicationDbContext : IdentityDbContext<IdentityUser>, IUnitOfWork
         modelBuilder.Entity<OrderEntity>()
             .HasKey(p => p.Id);
         modelBuilder.Entity<OrderEntity>()
-            .Property(p => p.UserEmail)
-            .IsRequired();
-        modelBuilder.Entity<OrderEntity>()
-            .Property(p => p.UserFirstName)
-            .IsRequired();
-        modelBuilder.Entity<OrderEntity>()
-            .Property(p => p.UserLastName)
-            .IsRequired();
-        modelBuilder.Entity<OrderEntity>()
-            .Property(p => p.UserAddress)
-            .IsRequired();
-        modelBuilder.Entity<OrderEntity>()
-            .Property(p => p.UserCity)
-            .IsRequired();
-        modelBuilder.Entity<OrderEntity>()
-            .Property(p => p.PostalCode)
-            .IsRequired();
-        modelBuilder.Entity<OrderEntity>()
-            .Property(p => p.PhoneNumber)
-            .IsRequired();
-        modelBuilder.Entity<OrderEntity>()
             .Property(p => p.OrderStatus)
             .IsRequired()
             .HasConversion<string>();
         modelBuilder.Entity<OrderEntity>()
             .HasOne(p => p.User)
-            .WithMany()
+            .WithMany(p => p.Orders)
+            .HasForeignKey(p => p.UserId);
+        modelBuilder.Entity<OrderEntity>()
+            .HasOne(p => p.Address)
+            .WithMany(p => p.Orders)
+            .HasForeignKey(p => p.AddressId)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        modelBuilder.Entity<AddressEntity>()
+            .HasKey(p => p.Id);
+        modelBuilder.Entity<AddressEntity>()
+            .Property(p => p.Country)
+            .IsRequired();
+        modelBuilder.Entity<AddressEntity>()
+            .Property(p => p.City)
+            .IsRequired();
+        modelBuilder.Entity<AddressEntity>()
+            .Property(p => p.Street)
+            .IsRequired();
+        modelBuilder.Entity<AddressEntity>()
+            .Property(p => p.PostalCode)
+            .IsRequired();
+        modelBuilder.Entity<AddressEntity>()
+            .Property(p => p.BuildingNumber)
+            .IsRequired();
+        modelBuilder.Entity<AddressEntity>()
+            .Property(p => p.ApartmentNumber)
+            .IsRequired(false);
+        modelBuilder.Entity<AddressEntity>()
+            .HasOne(p => p.User)
+            .WithMany(p => p.Addresses)
             .HasForeignKey(p => p.UserId);
 
         modelBuilder.Entity<ProductCategoryEntity>()
@@ -194,6 +204,17 @@ public class ApplicationDbContext : IdentityDbContext<IdentityUser>, IUnitOfWork
             .HasOne(p => p.ProductCategory)
             .WithMany(p => p.ProductSubcategories)
             .HasForeignKey(p => p.ProductCategoryId);
+
+        modelBuilder.Entity<ApplicationUser>()
+            .HasKey(p => p.Id);
+        modelBuilder.Entity<ApplicationUser>()
+            .Property(p => p.FirstName)
+            .IsRequired()
+            .HasMaxLength(50);
+        modelBuilder.Entity<ApplicationUser>()
+            .Property(p => p.LastName)
+            .IsRequired()
+            .HasMaxLength(50);
 
         modelBuilder.DataSeed();
     }

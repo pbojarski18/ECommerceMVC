@@ -8,21 +8,13 @@ using ECommerceMVC.Domain.Repositories;
 namespace ECommerceMVC.Application.Services;
 
 public class OrderService(IOrderRepository _orderRepository,
-                            IMapper _mapper,
-                            IProductOrderRepository _productOrderRepository,
-                            IStockRepository _stockRepository,
-                            IStockHistoryRepository _stockHistoryRepository,
-                            IBasketRepository _basketRepository,
-                            IUnitOfWork _unitOfWork) : IOrderService
+                          IMapper _mapper,
+                          IProductOrderRepository _productOrderRepository,
+                          IStockRepository _stockRepository,
+                          IStockHistoryRepository _stockHistoryRepository,
+                          IBasketRepository _basketRepository,
+                          IUnitOfWork _unitOfWork) : IOrderService
 {
-    private readonly IMapper _mapper = _mapper;
-    private readonly IOrderRepository _orderRepository = _orderRepository;
-    private readonly IProductOrderRepository _productOrderRepository = _productOrderRepository;
-    private readonly IStockRepository _stockRepository = _stockRepository;
-    private readonly IStockHistoryRepository _stockHistoryRepository = _stockHistoryRepository;
-    private readonly IBasketRepository _basketRepository = _basketRepository;
-    private readonly IUnitOfWork _unitOfWork = _unitOfWork;
-
     public async Task<int> AddAsync(CreateOrderDto createOrderDto, CancellationToken ct)
     {
         using var transaction = await _unitOfWork.BeginTransactionAsync();
@@ -37,7 +29,13 @@ public class OrderService(IOrderRepository _orderRepository,
             var productOrderEntities = new List<ProductOrderEntity>();
             foreach (var userBasket in userBaskets)
             {
-                ProductOrderEntity productOrderEntity = new ProductOrderEntity() { ProductId = userBasket.ProductId, ProductQuantity = userBasket.ProductQuantity, OrderId = orderEntity.Id, CreateTimeUtc = DateTimeOffset.UtcNow };
+                var productOrderEntity = new ProductOrderEntity()
+                {
+                    ProductId = userBasket.ProductId,
+                    ProductQuantity = userBasket.ProductQuantity,
+                    OrderId = orderEntity.Id,
+                    CreateTimeUtc = DateTimeOffset.UtcNow
+                };
                 productOrderEntities.Add(productOrderEntity);
             }
             await _productOrderRepository.AddRangeAsync(productOrderEntities, ct);
@@ -47,7 +45,14 @@ public class OrderService(IOrderRepository _orderRepository,
             foreach (var stock in stocks)
             {
                 stock.ProductQuantity = stock.ProductQuantity - productOrderEntities.Where(p => p.ProductId == stock.ProductId).Select(p => p.ProductQuantity).Sum();
-                var stockHistory = new StockHistoryEntity { ProductQuantity = stock.ProductQuantity, ProductId = stock.ProductId, StockId = stock.Id, Message = $"Stock reduced by {productOrderEntities.Where(p => p.ProductId == stock.ProductId).Select(p => p.ProductQuantity).Sum()} due to order {orderEntity.Id}", CreateTimeUtc = DateTime.UtcNow };
+                var stockHistory = new StockHistoryEntity
+                {
+                    ProductQuantity = stock.ProductQuantity,
+                    ProductId = stock.ProductId,
+                    StockId = stock.Id,
+                    Message = $"Stock reduced by {productOrderEntities.Where(p => p.ProductId == stock.ProductId).Select(p => p.ProductQuantity).Sum()} due to order {orderEntity.Id}",
+                    CreateTimeUtc = DateTime.UtcNow
+                };
                 stockHistories.Add(stockHistory);
             }
             await _stockRepository.UpdateRangeAsync(stocks, ct);

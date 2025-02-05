@@ -2,15 +2,15 @@
 
 public class AddProductDto
 {
-    public string Name { get; set; } = string.Empty;
+    public required string Name { get; set; }
 
-    public double Price { get; set; }
+    public required double Price { get; set; }
 
-    public string Brand { get; set; } = string.Empty;
+    public required string Brand { get; set; }
 
-    public string Description { get; set; } = string.Empty;
+    public required string Description { get; set; }
 
-    public string ImagePath { get; set; } = string.Empty;
+    public required string ImagePath { get; set; }
 
     public int ProductSubcategoryId { get; set; }
 

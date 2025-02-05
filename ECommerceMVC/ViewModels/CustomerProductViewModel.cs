@@ -7,6 +7,12 @@ namespace ECommerceMVC.Application.Dtos.Products;
 /// </summary>
 public class CustomerProductViewModel
 {
+    public int TotalCount { get; set; }
+
+    public int PageSize { get; set; }
+
+    public int CurrentPage { get; set; }
+
     public IEnumerable<ProductDto> Products { get; set; } = new List<ProductDto>(); // same as []
 
     public GetPagedByFiltersTransferDto GetPagedByFiltersTransferDto { get; set; } = new();

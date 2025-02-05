@@ -85,6 +85,30 @@
             }
         </div>
     </div>
+
+    <div class="pagination-container text-center">
+        <div class="pagination-info">
+            <span>Page @(Model.GetPagedByFiltersTransferDto.CurrentPage) of @(Math.Ceiling(Model.TotalCount / (double)Model.GetPagedByFiltersTransferDto.PageSize))</span>
+            <span> | Showing @(Math.Min(Model.GetPagedByFiltersTransferDto.PageSize, Model.TotalCount - ((Model.GetPagedByFiltersTransferDto.CurrentPage - 1) * Model.GetPagedByFiltersTransferDto.PageSize))) products</span>
+        </div>
+
+        <div class="pagination-buttons">
+            <form method="get" asp-action="pagination" asp-controller="Product" class="d-inline">
+                <input type="hidden" name="Id" value="@Model.GetPagedByFiltersTransferDto.ProductSubcategoryId" />
+                <input type="hidden" name="PageSize" value="@Model.GetPagedByFiltersTransferDto.PageSize" />
+                <input type="hidden" name="CurrentPage" value="@(Model.GetPagedByFiltersTransferDto.CurrentPage - 1)" />
+                <button type="submit" class="btn btn-primary" @(Model.GetPagedByFiltersTransferDto.CurrentPage <= 1 ? "disabled" : "")>Previous</button>
+            </form>
+
+            <form method="get" asp-action="pagination" asp-controller="Product" class="d-inline">
+                <input type="hidden" name="Id" value="@Model.GetPagedByFiltersTransferDto.ProductSubcategoryId" />
+                <input type="hidden" name="PageSize" value="@Model.GetPagedByFiltersTransferDto.PageSize" />
+                <input type="hidden" name="CurrentPage" value="@(Model.GetPagedByFiltersTransferDto.CurrentPage + 1)" />
+                <button type="submit" class="btn btn-primary" @(Model.GetPagedByFiltersTransferDto.CurrentPage * Model.GetPagedByFiltersTransferDto.PageSize >= Model.TotalCount ? "disabled" : "")>Next</button>
+            </form>
+        </div>
+    </div>
+
 }
 <div class="modal" id="basketModal" tabindex="-1" role="dialog" aria-labelledby="basketModalLabel" aria-hidden="true" style="display: none;">
     <div class="modal-dialog" role="document">

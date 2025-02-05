@@ -6,5 +6,5 @@ public interface IProductOrderRepository
 {
     Task<int> AddAsync(ProductOrderEntity productOrder, CancellationToken ct);
 
-    Task<bool> AddRangeAsync(IEnumerable<ProductOrderEntity> productOrders, CancellationToken ct);
+    Task AddRangeAsync(IEnumerable<ProductOrderEntity> productOrders, CancellationToken ct);
 }

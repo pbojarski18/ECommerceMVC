@@ -1,5 +1,6 @@
 ﻿@using ECommerceMVC.Application.Dtos.Orders
-@model CreateOrderDto
+@using ECommerceMVC.ViewModels
+@model OrderViewModel
 
 @{
     ViewData["Title"] = "Place Your Order";
@@ -12,42 +13,60 @@
         <div class="row">
             <div class="col-md-6">
                 <div class="form-group">
-                    <label asp-for="UserEmail" class="control-label">Email</label>
-                    <input asp-for="UserEmail" class="form-control" required />
-                    <span asp-validation-for="UserEmail" class="text-danger"></span>
+                    <label asp-for="User.Email" class="control-label">Email</label>
+                    <input asp-for="User.Email" class="form-control" required />
+                    <span asp-validation-for="User.Email" class="text-danger"></span>
                 </div>
             </div>
             <div class="col-md-6">
                 <div class="form-group">
-                    <label asp-for="PhoneNumber" class="control-label">Phone Number</label>
-                    <input asp-for="PhoneNumber" class="form-control" required />
-                    <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                    <label asp-for="User.PhoneNumber" class="control-label">Phone Number</label>
+                    <input asp-for="User.PhoneNumber" class="form-control" required />
+                    <span asp-validation-for="User.PhoneNumber" class="text-danger"></span>
                 </div>
             </div>
         </div>
-        <input asp-for="UserId" type="hidden" value="@Model.UserId" class="form-control" required />
+        <input asp-for="User.Id" type="hidden" value="@Model.User.Id" class="form-control" required />
         <div class="form-group">
-            <label asp-for="UserFirstName" class="control-label">First Name</label>
-            <input asp-for="UserFirstName" class="form-control" required />
-            <span asp-validation-for="UserFirstName" class="text-danger"></span>
+            <label asp-for="User.FirstName" class="control-label">First Name</label>
+            <input asp-for="User.FirstName" class="form-control" required />
+            <span asp-validation-for="User.FirstName" class="text-danger"></span>
         </div>
 
         <div class="form-group">
-            <label asp-for="UserLastName" class="control-label">Last Name</label>
-            <input asp-for="UserLastName" class="form-control" required />
-            <span asp-validation-for="UserLastName" class="text-danger"></span>
+            <label asp-for="User.LastName" class="control-label">Last Name</label>
+            <input asp-for="User.LastName" class="form-control" required />
+            <span asp-validation-for="User.LastName" class="text-danger"></span>
         </div>
 
         <div class="form-group">
-            <label asp-for="UserAddress" class="control-label">Address</label>
-            <input asp-for="UserAddress" class="form-control" required />
-            <span asp-validation-for="UserAddress" class="text-danger"></span>
+            <label asp-for="@Model.Country" class="control-label">Country</label>
+            <input asp-for="@Model.Country" class="form-control" required />
+            <span asp-validation-for="@Model.Country" class="text-danger"></span>
         </div>
 
         <div class="form-group">
-            <label asp-for="UserCity" class="control-label">City</label>
-            <input asp-for="UserCity" class="form-control" required />
-            <span asp-validation-for="UserCity" class="text-danger"></span>
+            <label asp-for="@Model.City" class="control-label">City</label>
+            <input asp-for="@Model.City" class="form-control" required />
+            <span asp-validation-for="@Model.City" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="@Model.Street" class="control-label">Street</label>
+            <input asp-for="@Model.Street" class="form-control" required />
+            <span asp-validation-for="@Model.Street" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="@Model.BuildingNumber" class="control-label">BuildingNumber</label>
+            <input asp-for="@Model.BuildingNumber" class="form-control" required />
+            <span asp-validation-for="@Model.BuildingNumber" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="@Model.ApartmentNumber" class="control-label">ApartmentNumber</label>
+            <input asp-for="@Model.ApartmentNumber" class="form-control"/>
+            <span asp-validation-for="@Model.ApartmentNumber" class="text-danger"></span>
         </div>
 
         <div class="form-group">

@@ -18,6 +18,7 @@ public static class DependencyRegistration
         services.AddScoped<IStockService, StockService>();
         services.AddScoped<IOrderService, OrderService>();
         services.AddScoped<IBasketService, BasketService>();
+        services.AddScoped<IAddressService, AddressService>();
         return services;
     }
 }

@@ -4,9 +4,9 @@ namespace ECommerceMVC.Domain.Repositories;
 
 public interface IProductDetailsRepository
 {
-    Task<bool> AddRangeAsync(IEnumerable<ProductDetailsEntity> productDetails, CancellationToken ct);
+    Task AddRangeAsync(IEnumerable<ProductDetailsEntity> productDetails, CancellationToken ct);
 
-    Task<bool> EditRangeAsync(IEnumerable<ProductDetailsEntity> productDetails, CancellationToken ct);
+    Task EditRangeAsync(IEnumerable<ProductDetailsEntity> productDetails, CancellationToken ct);
 
-    Task<bool> RemoveAsync(int productDetailId, CancellationToken ct);
+    Task RemoveAsync(int productDetailId, CancellationToken ct);
 }

@@ -1,10 +1,11 @@
 ﻿namespace ECommerceMVC.Application.Dtos.Products;
 
-public class ProductDto
+public record ProductDto()
 {
     public int Id { get; set; }
 
     public int ProductSubcategoryId { get; set; }
+
     public double Price { get; set; }
 
     public int ProductQuantity { get; set; }
